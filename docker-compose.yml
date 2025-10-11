@@ -1,0 +1,9 @@
+services:
+  scraper:
+    build: .
+    volumes:
+      - ./outputs:/app/outputs
+      - ./ine_catalog.json:/app/ine_catalog.json
+      - ./ine_scraper.py:/app/ine_scraper.py
+    environment:
+      - PYTHONUNBUFFERED=1

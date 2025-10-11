@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
+
+WORKDIR /app
+
+# Instalar dependencias
+RUN apt-get update && apt-get install -y \
+    libxkbcommon0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar catálogo y scraper
+COPY ine_catalog.json .
+COPY ine_scraper.py .
+
+# Crear directorio de salida
+RUN mkdir -p /app/outputs
+
+CMD ["python", "ine_scraper.py"]
