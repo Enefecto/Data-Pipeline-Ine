@@ -4,6 +4,21 @@ services:
     volumes:
       - ./outputs:/app/outputs
       - ./ine_catalog.json:/app/ine_catalog.json
-      - ./ine_scraper.py:/app/ine_scraper.py
+      - ./ine_scraper_concurrent.py:/app/ine_scraper_concurrent.py
+      - ./config.py:/app/config.py
     environment:
       - PYTHONUNBUFFERED=1
+      # Configuración de concurrencia
+      - MAX_CONCURRENT_BROWSERS=3
+      - DOWNLOAD_TIMEOUT=60
+      - DELAY_BETWEEN_DOWNLOADS=1.0
+      # Configuración de archivos
+      - CATALOG_PATH=/app/ine_catalog.json
+      - OUTPUT_DIR=/app/outputs
+      - SAVE_LOCAL_FILES=true
+      # Configuración del navegador
+      - HEADLESS=true
+      # Configuración de ejecución
+      # - MAX_DATASETS=5  # Descomentar para testing
+      # Base de datos (para futuro uso)
+      # - DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require

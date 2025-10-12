@@ -11,11 +11,12 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar catálogo y scraper
+# Copiar archivos del proyecto
 COPY ine_catalog.json .
-COPY ine_scraper.py .
+COPY config.py .
+COPY ine_scraper_concurrent.py .
 
 # Crear directorio de salida
 RUN mkdir -p /app/outputs
 
-CMD ["python", "ine_scraper.py"]
+CMD ["python", "ine_scraper_concurrent.py"]
