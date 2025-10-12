@@ -58,13 +58,3 @@ ine-scrapper-data/
         ├── data/                # 87 archivos CSV descargados
         └── reporte/             # Reportes de descarga (JSON y TXT)
 ```
-
-## Optimización para AWS Lambda
-
-El scraper está diseñado para ejecutarse eficientemente en AWS Lambda:
-
-- **Memoria recomendada:** 2048-3008 MB
-- **Timeout recomendado:** 15 minutos (900 segundos)
-- **Navegadores concurrentes recomendados:** 2-4 (ajustable según memoria)
-- **Costo estimado por ejecución:** ~$0.01-0.02 USD
-- **Ejecuciones esperadas:** 5 veces durante desarrollo/pruebas, luego 1 vez al mes en producción

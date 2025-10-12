@@ -4,12 +4,12 @@ services:
     volumes:
       - ./outputs:/app/outputs
       - ./ine_catalog.json:/app/ine_catalog.json
-      - ./ine_scraper_concurrent.py:/app/ine_scraper_concurrent.py
+      - ./ine_scraper.py:/app/ine_scraper.py
       - ./config.py:/app/config.py
     environment:
       - PYTHONUNBUFFERED=1
       # Configuración de concurrencia
-      - MAX_CONCURRENT_BROWSERS=3
+      - MAX_CONCURRENT_BROWSERS=4
       - DOWNLOAD_TIMEOUT=60
       - DELAY_BETWEEN_DOWNLOADS=1.0
       # Configuración de archivos

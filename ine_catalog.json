@@ -15,714 +15,613 @@
       "nombre": "Temperatura máxima absoluta",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000001",
-      "categoria": "Aire",
-      "subcategoria": "temperatura"
+      "categoria": "Aire"
     },
     {
       "id": "E10000002",
       "nombre": "Temperatura mínima absoluta",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000002",
-      "categoria": "Aire",
-      "subcategoria": "temperatura"
+      "categoria": "Aire"
     },
     {
       "id": "E10000003",
       "nombre": "Temperatura media",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000003",
-      "categoria": "Aire",
-      "subcategoria": "temperatura"
+      "categoria": "Aire"
     },
     {
       "id": "E10000004",
       "nombre": "Temperatura máxima media",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000004",
-      "categoria": "Aire",
-      "subcategoria": "temperatura"
+      "categoria": "Aire"
     },
     {
       "id": "E10000005",
       "nombre": "Temperatura mínima media",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000005",
-      "categoria": "Aire",
-      "subcategoria": "temperatura"
+      "categoria": "Aire"
     },
     {
       "id": "E10000006",
       "nombre": "Humedad relativa media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000006",
-      "categoria": "Aire",
-      "subcategoria": "humedad"
+      "categoria": "Aire"
     },
     {
       "id": "E10000007",
       "nombre": "Radiación global media",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000007",
-      "categoria": "Aire",
-      "subcategoria": "radiacion"
+      "categoria": "Aire"
     },
     {
       "id": "E10000008",
       "nombre": "Índice UV-B promedio",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000008",
-      "categoria": "Aire",
-      "subcategoria": "radiacion"
+      "categoria": "Aire"
     },
     {
       "id": "E10000011",
       "nombre": "Concentración de Material Particulado fino respirable (MP2,5) media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000011",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000012",
       "nombre": "Concentración de Material Particulado fino respirable (MP2,5) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000012",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000013",
       "nombre": "Concentración de Material Particulado fino respirable (MP2,5) mínima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000013",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000014",
       "nombre": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000014",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000015",
       "nombre": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000015",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000016",
       "nombre": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000016",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000017",
       "nombre": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000017",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000025",
       "nombre": "Concentración de material particulado respirable (MP10) media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000025",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000026",
       "nombre": "Concentración de material particulado respirable (MP10) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000026",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000027",
       "nombre": "Concentración de material particulado respirable (MP10) mínima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000027",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000028",
       "nombre": "Concentración de material particulado respirable (MP10) al percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000028",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000029",
       "nombre": "Concentración de material particulado respirable (MP10) al percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000029",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000030",
       "nombre": "Concentración de material particulado respirable (MP10) al percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000030",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000031",
       "nombre": "Concentración de material particulado respirable (MP10) al percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000031",
-      "categoria": "Aire",
-      "subcategoria": "particulas"
+      "categoria": "Aire"
     },
     {
       "id": "E10000038",
       "nombre": "Concentración de ozono (O3) media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000038",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000039",
-      "nombre": "Concentración de ozono (O3) máxima horaria anual",
+      "nombre": "Concentración de ozono (O3) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000039",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000040",
-      "nombre": "Concentración de ozono (O3) mínima horaria anual",
+      "nombre": "Concentración de ozono (O3) mínima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000040",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000041",
       "nombre": "Concentración de ozono (O3) al percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000041",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000042",
       "nombre": "Concentración de ozono (O3) al percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000042",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000043",
       "nombre": "Concentración de ozono (O3) al percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000043",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000044",
       "nombre": "Concentración de ozono (O3) al percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000044",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000045",
       "nombre": "Concentración de ozono (O3) al percentil 99",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000045",
-      "categoria": "Aire",
-      "subcategoria": "ozono"
+      "categoria": "Aire"
     },
     {
       "id": "E10000046",
       "nombre": "Concentración de dióxido de azufre (SO2) media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000046",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000047",
       "nombre": "Concentración de dióxido de azufre (SO2) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000047",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000048",
       "nombre": "Concentración de dióxido de azufre (SO2) mínima anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000048",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000049",
       "nombre": "Concentración de dióxido de azufre (SO2) al percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000049",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000050",
       "nombre": "Concentración de dióxido de azufre (SO2) al percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000050",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000051",
       "nombre": "Concentración de dióxido de azufre (SO2) al percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000051",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000052",
       "nombre": "Concentración de dióxido de azufre (SO2) al percentil 99",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000052",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000053",
       "nombre": "Concentración de dióxido de nitrógeno (NO2) media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000053",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000054",
       "nombre": "Concentración de dióxido de nitrógeno (NO2) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000054",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000055",
       "nombre": "Concentración de dióxido de nitrógeno (NO2) mínima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000055",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000056",
       "nombre": "Concentración de dióxido de nitrógeno (NO2) al percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000056",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000057",
       "nombre": "Concentración de dióxido de nitrógeno (NO2) al percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000057",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000058",
       "nombre": "Concentración de Dióxido de Nitrógeno (NO2) al percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000058",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000059",
       "nombre": "Concentración de dióxido de nitrógeno (NO2) al percentil 99",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000059",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000066",
       "nombre": "Concentración de monóxido de carbono (CO) media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000066",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000067",
       "nombre": "Concentración de monóxido de carbono (CO) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000067",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000068",
       "nombre": "Concentración de monóxido de carbono (CO) mínima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000068",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000069",
       "nombre": "Concentración de monóxido de carbono (CO) al percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000069",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000070",
       "nombre": "Concentración de monóxido de carbono (CO) al percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000070",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000071",
       "nombre": "Concentración de monóxido de carbono (CO) al percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000071",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000072",
       "nombre": "Concentración de monóxido de carbono (CO) al percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000072",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000073",
       "nombre": "Concentración de monóxido de carbono (CO) al percentil 99",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000073",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000074",
       "nombre": "Concentración de monóxido de nitrógeno (NO) media mensua",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000074",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000075",
       "nombre": "Concentración de monóxido de nitrógeno (NO) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000075",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000076",
       "nombre": "Concentración de monóxido de nitrógeno (NO) mínima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000076",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000077",
       "nombre": "Concentración de monóxido de nitrógeno (NO) al percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000077",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000078",
       "nombre": "Concentración de monóxido de nitrógeno (NO) al percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000078",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000079",
       "nombre": "Concentración de monóxido de nitrógeno (NO) al percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000079",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000080",
       "nombre": "Concentración de monóxido de nitrógeno (NO) al percentil 99",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000080",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000081",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) media mensual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000081",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000082",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) máxima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000082",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000083",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) mínima horaria anual",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000083",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000084",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) al percentil 50",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000084",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000085",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) al percentil 90",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000085",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000086",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) al percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000086",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000087",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) al percentil 99",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000087",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000088",
       "nombre": "Concentración de dióxido de azufre (SO2) al percentil 98",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000088",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000089",
       "nombre": "Concentración de dióxido de nitrógeno (NO2) al percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000089",
-      "categoria": "Aire",
-      "subcategoria": "dioxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000090",
       "nombre": "Concentración de monóxido de nitrógeno (NO) al percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000090",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000091",
       "nombre": "Concentración de óxidos de nitrógeno (NOx) al percentil 95",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000091",
-      "categoria": "Aire",
-      "subcategoria": "monoxido"
+      "categoria": "Aire"
     },
     {
       "id": "E10000092",
       "nombre": "Número de eventos de olas de calor",
       "modulo": "Módulo VBA- Estado - Aire",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E10000092",
-      "categoria": "Aire",
-      "subcategoria": "otros"
+      "categoria": "Aire"
     },
     {
       "id": "E20101001",
       "nombre": "Caudal medio de aguas corrientes",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20101001",
-      "categoria": "Agua",
-      "subcategoria": "monoxido"
+      "categoria": "Agua"
     },
     {
       "id": "E20103001",
       "nombre": "Volumen del embalse, según embalse",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20103001",
-      "categoria": "Agua",
-      "subcategoria": "agua_volumen"
+      "categoria": "Agua"
     },
     {
       "id": "E20104001",
       "nombre": "Nivel estático de aguas subterráneas",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20104001",
-      "categoria": "Agua",
-      "subcategoria": "monoxido"
+      "categoria": "Agua"
     },
     {
       "id": "E20105001",
       "nombre": "Cantidad de agua caída",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20105001",
-      "categoria": "Agua",
-      "subcategoria": "otros"
+      "categoria": "Agua"
     },
     {
       "id": "E20105002",
       "nombre": "Altura de nieve equivalente en agua",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20105002",
-      "categoria": "Agua",
-      "subcategoria": "agua_nivel"
+      "categoria": "Agua"
     },
     {
       "id": "E20105003",
       "nombre": "Evaporación real, según estación",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20105003",
-      "categoria": "Agua",
-      "subcategoria": "agua_evaporacion"
+      "categoria": "Agua"
     },
     {
       "id": "E20106001",
       "nombre": "Número de glaciares, según cuenca hidrográfica",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20106001",
-      "categoria": "Agua",
-      "subcategoria": "agua_glaciares"
+      "categoria": "Agua"
     },
     {
       "id": "E20106002",
       "nombre": "Superficie de glaciares, según cuenca hidrográfica",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20106002",
-      "categoria": "Agua",
-      "subcategoria": "agua_glaciares"
+      "categoria": "Agua"
     },
     {
       "id": "E20106003",
       "nombre": "Volumen de hielo glaciar estimado, según cuenca hidrográfica",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20106003",
-      "categoria": "Agua",
-      "subcategoria": "agua_volumen"
+      "categoria": "Agua"
     },
     {
       "id": "E20106004",
       "nombre": "Volumen de agua de glaciares estimada, según cuenca hidrográfica",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20106004",
-      "categoria": "Agua",
-      "subcategoria": "agua_volumen"
+      "categoria": "Agua"
     },
     {
       "id": "E20200015",
       "nombre": "Nivel medio del mar",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20200015",
-      "categoria": "Agua",
-      "subcategoria": "agua_nivel"
+      "categoria": "Agua"
     },
     {
       "id": "E20200016",
       "nombre": "Temperatura superficial del mar",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20200016",
-      "categoria": "Agua",
-      "subcategoria": "temperatura"
+      "categoria": "Agua"
     },
     {
       "id": "E20200002",
       "nombre": "Concentración de metales disueltos en la matriz acuosa",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20200002",
-      "categoria": "Agua",
-      "subcategoria": "monoxido"
+      "categoria": "Agua"
     },
     {
       "id": "E20200005",
       "nombre": "Concentración de coliformes fecales en matriz acuosa",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20200005",
-      "categoria": "Agua",
-      "subcategoria": "monoxido"
+      "categoria": "Agua"
     },
     {
       "id": "E20200006",
       "nombre": "Concentración de metales totales en la matriz sedimentaria",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20200006",
-      "categoria": "Agua",
-      "subcategoria": "monoxido"
+      "categoria": "Agua"
     },
     {
       "id": "E20200011",
       "nombre": "Concentración de coliformes fecales en matriz biológica",
       "modulo": "Módulo VBA- Estado- Agua",
       "url": "https://stat.ine.cl/Index.aspx?DataSetCode=E20200011",
-      "categoria": "Agua",
-      "subcategoria": "monoxido"
+      "categoria": "Agua"
     }
   ],
   "resumen": {
     "aire": 71,
-    "agua": 16,
-    "por_subcategoria": {
-      "temperatura": 6,
-      "humedad": 1,
-      "radiacion": 2,
-      "particulas": 14,
-      "ozono": 8,
-      "dioxido": 16,
-      "monoxido": 30,
-      "otros": 2,
-      "agua_volumen": 3,
-      "agua_nivel": 2,
-      "agua_evaporacion": 1,
-      "agua_glaciares": 2
-    }
+    "agua": 16
   }
 }

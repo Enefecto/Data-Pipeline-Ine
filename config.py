@@ -10,7 +10,7 @@ class Config:
     # Número de navegadores/workers concurrentes
     # Para AWS Lambda: 2-4 navegadores es óptimo (balance costo/velocidad)
     # Para local/servidor: puede aumentarse según CPU disponible
-    MAX_CONCURRENT_BROWSERS = int(os.getenv('MAX_CONCURRENT_BROWSERS', '3'))
+    MAX_CONCURRENT_BROWSERS = int(os.getenv('MAX_CONCURRENT_BROWSERS', '4'))
 
     # Timeout para cada descarga individual (segundos)
     DOWNLOAD_TIMEOUT = int(os.getenv('DOWNLOAD_TIMEOUT', '60'))

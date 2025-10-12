@@ -14,9 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar archivos del proyecto
 COPY ine_catalog.json .
 COPY config.py .
-COPY ine_scraper_concurrent.py .
+COPY ine_scraper.py .
 
 # Crear directorio de salida
 RUN mkdir -p /app/outputs
 
-CMD ["python", "ine_scraper_concurrent.py"]
+CMD ["python", "ine_scraper.py"]

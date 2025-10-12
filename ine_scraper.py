@@ -1,44 +1,49 @@
 """
-INE Scraper - Descargador automatizado de datasets del INE Chile
-Versión Final - 100% Funcional
+INE Scraper - Versión Concurrente
+Optimizado para AWS Lambda con múltiples navegadores en paralelo
 """
 
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
+import asyncio
 import json
+import re
+import time
 from pathlib import Path
 from datetime import datetime
-import time
-import re
+from typing import List, Dict, Optional
+from playwright.async_api import async_playwright, Page, Browser, TimeoutError as PlaywrightTimeout
 
-class INEScraper:
-    def __init__(self, catalog_path="/app/ine_catalog.json"):
-        self.catalog_path = catalog_path
+from config import Config
+
+
+class INEScraperConcurrent:
+    def __init__(self):
+        self.catalog_path = Config.CATALOG_PATH
 
         # Crear estructura de carpetas con fecha actual
         fecha_hoy = datetime.now().strftime("%d-%m-%Y")
-        self.base_output_dir = Path(f"/app/outputs/{fecha_hoy}")
+        self.base_output_dir = Path(Config.OUTPUT_DIR) / fecha_hoy
         self.data_dir = self.base_output_dir / "data"
         self.reporte_dir = self.base_output_dir / "reporte"
 
-        # Crear directorios
-        self.data_dir.mkdir(parents=True, exist_ok=True)
-        self.reporte_dir.mkdir(parents=True, exist_ok=True)
+        # Crear directorios solo si se guardan archivos localmente
+        if Config.SAVE_LOCAL_FILES:
+            self.data_dir.mkdir(parents=True, exist_ok=True)
+            self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
         self.datasets = []
         self.resultados = {
             "exitosos": [],
             "fallidos": []
         }
+        self.lock = asyncio.Lock()  # Para acceso thread-safe a resultados
 
-    def limpiar_nombre_archivo(self, nombre):
+    def limpiar_nombre_archivo(self, nombre: str) -> str:
         """Convierte el nombre del dataset en un nombre de archivo válido"""
-        # Eliminar caracteres especiales y reemplazar espacios
         nombre_limpio = re.sub(r'[^\w\s-]', '', nombre)
         nombre_limpio = re.sub(r'\s+', '_', nombre_limpio)
-        # Limitar longitud
         return nombre_limpio[:100]
 
-    def cargar_catalogo(self):
+    def cargar_catalogo(self) -> List[Dict]:
         """Carga el catálogo de datasets"""
         print("📖 Cargando catálogo...")
 
@@ -50,21 +55,21 @@ class INEScraper:
 
         return self.datasets
 
-    def forzar_idioma_espanol(self, page):
+    async def forzar_idioma_espanol(self, page: Page) -> bool:
         """Asegura que la página esté en español"""
         try:
             # Verificar si ya está en español
-            if '?lang=es' in page.url or page.locator('a:has-text("Exportar")').count() > 0:
+            if '?lang=es' in page.url or await page.locator('a:has-text("Exportar")').count() > 0:
                 return True
 
             # Buscar link de español
             for selector in ['a:has-text("Español")', 'a[href*="lang=es"]']:
                 try:
                     link = page.locator(selector).first
-                    if link.count() > 0:
-                        link.click()
-                        page.wait_for_load_state("networkidle", timeout=10000)
-                        page.wait_for_timeout(2000)
+                    if await link.count() > 0:
+                        await link.click()
+                        await page.wait_for_load_state("networkidle", timeout=10000)
+                        await page.wait_for_timeout(2000)
                         return True
                 except:
                     continue
@@ -74,30 +79,26 @@ class INEScraper:
             print(f"   ⚠️  Error cambiando idioma: {e}")
             return False
 
-    def descargar_dataset(self, page, dataset_info, idx, total):
+    async def descargar_dataset(self, page: Page, dataset_info: Dict, idx: int, total: int, worker_id: int) -> Dict:
         """Descarga un dataset individual"""
         dataset_id = dataset_info['id']
         url = dataset_info['url']
         nombre = dataset_info['nombre']
         categoria = dataset_info.get('categoria', 'general')
 
-        print(f"\n[{idx}/{total}] {dataset_id}")
-        print(f"   📄 {nombre[:70]}...")
+        start_time = time.time()
+        paso_actual = ""
 
         try:
-            # PASO 1: Navegar con parámetro de idioma español
+            # PASO 1: Navegar
+            paso_actual = "navegación"
             url_espanol = url if 'lang=es' in url else f"{url}&lang=es"
-            print(f"   🌐 Navegando...")
+            await page.goto(url_espanol, wait_until="domcontentloaded", timeout=Config.DOWNLOAD_TIMEOUT * 1000)
+            await page.wait_for_timeout(3000)
+            await self.forzar_idioma_espanol(page)
 
-            page.goto(url_espanol, wait_until="domcontentloaded", timeout=60000)
-            page.wait_for_timeout(5000)
-
-            # Verificar idioma
-            self.forzar_idioma_espanol(page)
-
-            # PASO 2: Buscar y hacer hover en el menú Exportar
-            print(f"   🔍 Buscando menú Exportar...")
-
+            # PASO 2: Buscar menú Exportar
+            paso_actual = "búsqueda de menú Exportar"
             menu_export = None
             selectores_menu = [
                 'li#menubar-export',
@@ -110,9 +111,8 @@ class INEScraper:
             for selector in selectores_menu:
                 try:
                     locator = page.locator(selector).first
-                    if locator.count() > 0:
+                    if await locator.count() > 0:
                         menu_export = locator
-                        print(f"   ✅ Menú encontrado")
                         break
                 except:
                     continue
@@ -120,14 +120,11 @@ class INEScraper:
             if not menu_export:
                 raise Exception("No se encontró el menú Exportar")
 
-            # Hover para abrir submenú
-            print(f"   🖱️  Abriendo menú...")
-            menu_export.hover()
-            page.wait_for_timeout(2000)
+            await menu_export.hover()
+            await page.wait_for_timeout(2000)
 
             # PASO 3: Buscar opción CSV
-            print(f"   🔍 Buscando opción CSV...")
-
+            paso_actual = "búsqueda de opción CSV"
             opcion_csv = None
             selectores_csv = [
                 'li#menuitemExportCSV a',
@@ -139,9 +136,8 @@ class INEScraper:
             for selector in selectores_csv:
                 try:
                     locator = page.locator(selector).first
-                    if locator.count() > 0 and locator.is_visible():
+                    if await locator.count() > 0 and await locator.is_visible():
                         opcion_csv = locator
-                        print(f"   ✅ Opción CSV encontrada")
                         break
                 except:
                     continue
@@ -149,249 +145,330 @@ class INEScraper:
             if not opcion_csv:
                 raise Exception("No se encontró opción CSV en el menú")
 
-            # Click en CSV para abrir modal
-            print(f"   🖱️  Haciendo click en CSV...")
-            opcion_csv.click()
+            await opcion_csv.click()
+            await page.wait_for_timeout(3000)
 
-            # Esperar modal
-            print(f"   ⏳ Esperando modal...")
-            page.wait_for_timeout(5000)
+            # PASO 4: Buscar iframe del modal
+            paso_actual = "acceso a modal (iframe)"
+            iframe_locator = page.frame_locator('iframe#DialogFrame')
+            await iframe_locator.locator('body').wait_for(timeout=5000, state='attached')
 
-            # Intentar detectar modal
-            try:
-                page.wait_for_selector('.ui-dialog, [role="dialog"], .modal, .popup, input[type="submit"]', timeout=5000, state='attached')
-                print(f"   ✅ Modal detectado")
-            except:
-                print(f"   ⚠️  Modal no detectado estándar, continuando...")
-
-            page.wait_for_timeout(2000)
-
-            # PASO 4: Buscar iframe del modal (¡LA CLAVE!)
-            print(f"   🔍 Buscando iframe del modal...")
-            iframe_found = False
-            modal_frame = None
-
-            try:
-                # Buscar iframe con id DialogFrame
-                iframe_locator = page.frame_locator('iframe#DialogFrame')
-                # Verificar que el iframe está cargado
-                iframe_locator.locator('body').wait_for(timeout=5000, state='attached')
-                modal_frame = iframe_locator
-                iframe_found = True
-                print(f"   ✅ Iframe encontrado")
-            except Exception as e:
-                print(f"   ⚠️  Error buscando iframe: {e}")
-                raise Exception("No se encontró iframe del modal")
-
-            # PASO 5: Buscar botón de descarga DENTRO DEL IFRAME
-            print(f"   🔍 Buscando botón Descargar...")
-
+            # PASO 5: Buscar botón de descarga
+            paso_actual = "búsqueda de botón Descargar"
             boton_descargar = None
 
             try:
-                # Buscar inputs dentro del iframe
-                inputs = modal_frame.locator('input[type="button"], input[type="submit"]').all()
-
-                for i, inp in enumerate(inputs):
+                inputs = await iframe_locator.locator('input[type="button"], input[type="submit"]').all()
+                for inp in inputs:
                     try:
-                        value = inp.get_attribute('value')
-                        visible = inp.is_visible()
-
-                        # Buscar específicamente "Descargar" o "Download"
+                        value = await inp.get_attribute('value')
                         if value and ('Descargar' in value or 'Download' in value or 'escargar' in value):
                             boton_descargar = inp
-                            print(f"   ✅ Botón encontrado: '{value}'")
                             break
                     except:
                         continue
-            except Exception as e:
-                print(f"   ⚠️  Error buscando botón: {e}")
+            except:
+                pass
 
-            # Si no encontró, intentar selectores específicos
             if not boton_descargar:
                 selectores_boton = [
                     'input[value="Descargar"]',
                     'input[value="Download"]',
                     '[id*="btnExport"]'
                 ]
-
                 for selector in selectores_boton:
                     try:
-                        locator = modal_frame.locator(selector).first
-                        if locator.count() > 0:
+                        locator = iframe_locator.locator(selector).first
+                        if await locator.count() > 0:
                             boton_descargar = locator
-                            print(f"   ✅ Botón encontrado con selector")
                             break
                     except:
                         continue
 
             if not boton_descargar:
-                raise Exception("No se encontró botón de descarga en el iframe")
+                raise Exception("No se encontró botón de descarga")
 
-            # PASO 6: Click en descargar y esperar descarga
-            print(f"   📥 Descargando...")
+            # PASO 6: Descargar archivo
+            paso_actual = "descarga de archivo"
+            async with page.expect_download(timeout=45000) as download_info:
+                await boton_descargar.click()
 
-            with page.expect_download(timeout=45000) as download_info:
-                boton_descargar.click()
+            download = await download_info.value
 
-            download = download_info.value
-
-            # Guardar archivo con el NOMBRE del dataset
+            # Guardar archivo
             nombre_archivo = self.limpiar_nombre_archivo(nombre)
             filename = f"{nombre_archivo}.csv"
-            filepath = self.data_dir / filename
-            download.save_as(filepath)
 
-            size_kb = filepath.stat().st_size / 1024
-            print(f"   ✅ Descargado ({size_kb:.1f} KB)")
+            file_size = 0
+            filepath_str = ""
+
+            if Config.SAVE_LOCAL_FILES:
+                filepath = self.data_dir / filename
+                await download.save_as(filepath)
+                file_size = filepath.stat().st_size
+                filepath_str = str(filepath)
+            else:
+                download_bytes = await download.read_all_bytes()
+                file_size = len(download_bytes)
+
+            elapsed = time.time() - start_time
+            size_kb = file_size / 1024
+
+            # Mensaje de éxito consolidado
+            print(f"[{idx}/{total}] ✓ {nombre} ({size_kb:.0f} KB)", flush=True)
 
             return {
                 "id": dataset_id,
                 "status": "exitoso",
-                "filepath": str(filepath),
+                "filepath": filepath_str,
                 "nombre": nombre,
                 "nombre_archivo": filename,
-                "size": filepath.stat().st_size,
-                "categoria": categoria
+                "size": file_size,
+                "size_kb": round(size_kb, 2),
+                "categoria": categoria,
+                "duracion_segundos": round(elapsed, 2),
+                "worker_id": worker_id
             }
 
         except Exception as e:
+            elapsed = time.time() - start_time
             error_msg = str(e)
-            print(f"   ❌ Error: {error_msg[:100]}")
+
+            # Mensaje de error consolidado con paso donde falló
+            print(f"[{idx}/{total}] ✗ {nombre} - Error en {paso_actual}: {error_msg[:50]}", flush=True)
 
             return {
                 "id": dataset_id,
                 "status": "fallido",
                 "error": error_msg,
+                "paso_fallo": paso_actual,
                 "nombre": nombre,
-                "url": url
+                "url": url,
+                "duracion_segundos": round(elapsed, 2),
+                "worker_id": worker_id
             }
 
-    def scrape_all(self, max_datasets=None, headless=True):
-        """Descarga todos los datasets"""
-        print("🚀 Iniciando descarga...")
+    async def worker(self, worker_id: int, queue: asyncio.Queue, browser: Browser, total_datasets: int):
+        """Worker que procesa datasets de la cola"""
+        try:
+            context = await browser.new_context(
+                viewport={'width': Config.VIEWPORT_WIDTH, 'height': Config.VIEWPORT_HEIGHT},
+                user_agent=Config.USER_AGENT,
+                accept_downloads=True
+            )
+            page = await context.new_page()
+            page.set_default_timeout(Config.DOWNLOAD_TIMEOUT * 1000)
 
-        if max_datasets:
-            datasets_a_procesar = self.datasets[:max_datasets]
-            print(f"📦 Datasets: {max_datasets} (TEST)")
+            while True:
+                try:
+                    task = await asyncio.wait_for(queue.get(), timeout=2.0)
+
+                    if task is None:  # Señal de terminación
+                        queue.task_done()
+                        break
+
+                    idx, dataset = task
+
+                    # Procesar descarga
+                    resultado = await self.descargar_dataset(page, dataset, idx, total_datasets, worker_id)
+
+                    # Guardar resultado de forma thread-safe
+                    async with self.lock:
+                        if resultado['status'] == 'exitoso':
+                            self.resultados['exitosos'].append(resultado)
+                        else:
+                            self.resultados['fallidos'].append(resultado)
+
+                    # Pausa entre descargas
+                    await asyncio.sleep(Config.DELAY_BETWEEN_DOWNLOADS)
+
+                    queue.task_done()
+
+                except asyncio.TimeoutError:
+                    continue
+                except Exception as e:
+                    print(f"\n[W{worker_id}] ERROR CRÍTICO: {e}", flush=True)
+                    try:
+                        queue.task_done()
+                    except:
+                        pass
+
+            await context.close()
+
+        except Exception as e:
+            print(f"\n[W{worker_id}] ERROR AL INICIALIZAR: {e}", flush=True)
+            import traceback
+            traceback.print_exc()
+
+    async def scrape_all_concurrent(self):
+        """Descarga todos los datasets usando múltiples navegadores concurrentes"""
+        print("🚀 Iniciando descarga CONCURRENTE...")
+
+        Config.print_config()
+
+        # Determinar datasets a procesar
+        if Config.MAX_DATASETS:
+            datasets_a_procesar = self.datasets[:Config.MAX_DATASETS]
+            print(f"\n📦 Datasets: {Config.MAX_DATASETS} (TEST)")
         else:
             datasets_a_procesar = self.datasets
-            print(f"📦 Datasets: {len(datasets_a_procesar)} (COMPLETO)")
+            print(f"\n📦 Datasets: {len(datasets_a_procesar)} (COMPLETO)")
 
-        print(f"⏱️  Estimado: {len(datasets_a_procesar) * 12 / 60:.1f} minutos")
+        total_datasets = len(datasets_a_procesar)
+        num_workers = Config.MAX_CONCURRENT_BROWSERS
+
+        # Estimación de tiempo (aprox. 12 segundos por dataset / número de workers)
+        tiempo_estimado = (total_datasets * 12) / num_workers / 60
+        print(f"⏱️  Estimado: {tiempo_estimado:.1f} minutos con {num_workers} navegadores")
         print(f"📁 Carpeta de salida: {self.base_output_dir}\n")
 
         start_time = time.time()
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=headless)
-            context = browser.new_context(
-                viewport={'width': 1920, 'height': 1080},
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                accept_downloads=True
-            )
-            page = context.new_page()
-            page.set_default_timeout(60000)
+        # Crear cola de tareas
+        queue = asyncio.Queue()
+        for idx, dataset in enumerate(datasets_a_procesar, 1):
+            await queue.put((idx, dataset))
 
-            total = len(datasets_a_procesar)
+        print("\n" + "=" * 80)
+        print("INICIANDO DESCARGA")
+        print("=" * 80 + "\n")
 
-            for idx, dataset in enumerate(datasets_a_procesar, 1):
-                resultado = self.descargar_dataset(page, dataset, idx, total)
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=Config.HEADLESS)
 
-                if resultado['status'] == 'exitoso':
-                    self.resultados['exitosos'].append(resultado)
-                else:
-                    self.resultados['fallidos'].append(resultado)
+            # Crear workers
+            workers = []
+            for worker_id in range(num_workers):
+                worker_task = asyncio.create_task(
+                    self.worker(worker_id + 1, queue, browser, total_datasets)
+                )
+                workers.append(worker_task)
 
-                # Pausa entre descargas
-                time.sleep(2)
+            await asyncio.sleep(1)
 
-            browser.close()
+            # Esperar a que se procesen todas las tareas
+            await queue.join()
+
+            # Enviar señal de terminación a workers
+            for _ in range(num_workers):
+                await queue.put(None)
+
+            await asyncio.gather(*workers, return_exceptions=True)
+            await browser.close()
 
         elapsed = time.time() - start_time
 
-        print(f"\n{'='*60}")
-        print(f"✨ Completado en {elapsed/60:.1f} minutos")
-        print(f"{'='*60}\n")
+        return self.resultados, elapsed
 
-        return self.resultados
-
-    def generar_reporte(self):
-        """Genera reporte de resultados"""
+    def generar_reporte(self, tiempo_total_segundos: float):
+        """Genera reporte de resultados en consola y JSON"""
         exitosos = len(self.resultados['exitosos'])
         fallidos = len(self.resultados['fallidos'])
         total = exitosos + fallidos
+        tasa_exito = (exitosos/total*100 if total > 0 else 0)
 
-        print(f"""
-╔══════════════════════════════════════════════╗
-║           REPORTE DE DESCARGA                ║
-╠══════════════════════════════════════════════╣
-║ Total:     {total:<34}║
-║ Exitosos:  {exitosos:<34}║
-║ Fallidos:  {fallidos:<34}║
-║ Tasa:      {(exitosos/total*100 if total > 0 else 0):.1f}% exitoso                      ║
-╚══════════════════════════════════════════════╝
-""")
+        # Calcular estadísticas
+        total_size = sum(r['size'] for r in self.resultados['exitosos']) if exitosos > 0 else 0
+        total_size_mb = total_size / (1024*1024)
 
-        if exitosos > 0:
-            total_size = sum(r['size'] for r in self.resultados['exitosos'])
-            print(f"💾 Total descargado: {total_size / (1024*1024):.2f} MB\n")
+        duracion_promedio = sum(r['duracion_segundos'] for r in self.resultados['exitosos']) / exitosos if exitosos > 0 else 0
+        duracion_min = min((r['duracion_segundos'] for r in self.resultados['exitosos']), default=0)
+        duracion_max = max((r['duracion_segundos'] for r in self.resultados['exitosos']), default=0)
 
-        # Guardar reporte
+        # REPORTE EN CONSOLA
+        print("\n" + "=" * 80)
+        print("REPORTE FINAL DE DESCARGA".center(80))
+        print("=" * 80)
+        print(f"\n📊 RESUMEN:")
+        print(f"   Total de datasets:        {total}")
+        print(f"   ✓ Exitosos:               {exitosos}")
+        print(f"   ✗ Fallidos:               {fallidos}")
+        print(f"   Tasa de éxito:            {tasa_exito:.1f}%")
+        print(f"\n⏱️  TIEMPOS:")
+        print(f"   Tiempo total:             {tiempo_total_segundos/60:.1f} minutos ({tiempo_total_segundos:.1f}s)")
+        print(f"   Tiempo promedio/dataset:  {duracion_promedio:.1f}s")
+        print(f"   Tiempo más rápido:        {duracion_min:.1f}s")
+        print(f"   Tiempo más lento:         {duracion_max:.1f}s")
+        print(f"   Velocidad:                {tiempo_total_segundos/total:.1f}s/dataset (con {Config.MAX_CONCURRENT_BROWSERS} workers)")
+        print(f"\n💾 DATOS:")
+        print(f"   Total descargado:         {total_size_mb:.2f} MB")
+        print(f"   Tamaño promedio:          {total_size/exitosos/1024:.1f} KB" if exitosos > 0 else "   Tamaño promedio:          N/A")
+
+        # Mostrar fallidos si existen
+        if fallidos > 0:
+            print(f"\n❌ DATASETS FALLIDOS ({fallidos}):")
+            for r in self.resultados['fallidos']:
+                print(f"   [{r['id']}] {r['nombre']}")
+                print(f"      └─ Error en {r['paso_fallo']}: {r['error'][:60]}")
+
+        print("\n" + "=" * 80 + "\n")
+
+        # GUARDAR REPORTE JSON
         reporte = {
-            "timestamp": datetime.now().isoformat(),
-            "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-            "total": total,
-            "exitosos": exitosos,
-            "fallidos": fallidos,
-            "tasa_exito": round(exitosos/total*100, 2) if total > 0 else 0,
-            "detalles": self.resultados
+            "metadata": {
+                "timestamp": datetime.now().isoformat(),
+                "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+                "version_scraper": "2.0 - Concurrente"
+            },
+            "configuracion": {
+                "workers_concurrentes": Config.MAX_CONCURRENT_BROWSERS,
+                "timeout_descarga": Config.DOWNLOAD_TIMEOUT,
+                "delay_entre_descargas": Config.DELAY_BETWEEN_DOWNLOADS,
+                "modo_headless": Config.HEADLESS
+            },
+            "resumen": {
+                "total_datasets": total,
+                "exitosos": exitosos,
+                "fallidos": fallidos,
+                "tasa_exito_porcentaje": round(tasa_exito, 2)
+            },
+            "tiempos": {
+                "total_segundos": round(tiempo_total_segundos, 2),
+                "total_minutos": round(tiempo_total_segundos/60, 2),
+                "promedio_por_dataset_segundos": round(duracion_promedio, 2),
+                "minimo_segundos": round(duracion_min, 2),
+                "maximo_segundos": round(duracion_max, 2),
+                "velocidad_segundos_por_dataset": round(tiempo_total_segundos/total, 2) if total > 0 else 0
+            },
+            "datos": {
+                "total_bytes": total_size,
+                "total_mb": round(total_size_mb, 2),
+                "promedio_kb_por_dataset": round(total_size/exitosos/1024, 2) if exitosos > 0 else 0
+            },
+            "datasets_exitosos": self.resultados['exitosos'],
+            "datasets_fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.reporte_dir / "reporte_descarga.json"
-        with open(reporte_path, 'w', encoding='utf-8') as f:
-            json.dump(reporte, f, indent=2, ensure_ascii=False)
+        if Config.SAVE_LOCAL_FILES:
+            reporte_path = self.reporte_dir / "reporte_descarga.json"
+            with open(reporte_path, 'w', encoding='utf-8') as f:
+                json.dump(reporte, f, indent=2, ensure_ascii=False)
+            print(f"📄 Reporte JSON guardado: {reporte_path}\n")
 
-        print(f"📄 Reporte: {reporte_path}")
-
-        if fallidos > 0:
-            print(f"\n❌ Primeros fallidos ({min(fallidos, 5)}):")
-            for r in self.resultados['fallidos'][:5]:
-                print(f"   - {r['id']}: {r.get('error', '')[:80]}")
-
-        # Guardar también listado de archivos descargados
-        if exitosos > 0:
-            listado_path = self.reporte_dir / "archivos_descargados.txt"
-            with open(listado_path, 'w', encoding='utf-8') as f:
-                f.write(f"ARCHIVOS DESCARGADOS - {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}\n")
-                f.write(f"{'='*80}\n\n")
-                for r in self.resultados['exitosos']:
-                    f.write(f"{r['nombre_archivo']}\n")
-                    f.write(f"  ID: {r['id']}\n")
-                    f.write(f"  Nombre: {r['nombre']}\n")
-                    f.write(f"  Tamaño: {r['size'] / 1024:.1f} KB\n\n")
-
-            print(f"📋 Listado: {listado_path}")
+        return reporte
 
 
-if __name__ == "__main__":
+async def main():
     print("""
 ╔══════════════════════════════════════════════╗
-║       INE SCRAPER - VERSIÓN FINAL            ║
-║          100% FUNCIONAL                      ║
+║     INE SCRAPER - VERSIÓN CONCURRENTE        ║
+║      Optimizado para AWS Lambda              ║
 ╚══════════════════════════════════════════════╝
     """)
 
-    scraper = INEScraper()
+    scraper = INEScraperConcurrent()
     scraper.cargar_catalogo()
 
-    # DESCARGA COMPLETA DE TODOS LOS DATASETS
-    # Para test, cambiar a max_datasets=3
-    scraper.scrape_all(max_datasets=None, headless=True)
+    resultados, tiempo_total = await scraper.scrape_all_concurrent()
 
-    scraper.generar_reporte()
+    scraper.generar_reporte(tiempo_total)
 
-    print("\n✅ Proceso completado!")
-    fecha_hoy = datetime.now().strftime("%d-%m-%Y")
-    print(f"📁 Datos en: outputs/{fecha_hoy}/data/")
-    print(f"📄 Reporte en: outputs/{fecha_hoy}/reporte/")
+    print("✅ Proceso completado!")
+    if Config.SAVE_LOCAL_FILES:
+        fecha_hoy = datetime.now().strftime("%d-%m-%Y")
+        print(f"📁 Archivos CSV: outputs/{fecha_hoy}/data/")
+        print(f"📄 Reporte JSON: outputs/{fecha_hoy}/reporte/")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
