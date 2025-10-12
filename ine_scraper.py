@@ -20,8 +20,9 @@ class INEScraperConcurrent:
         self.catalog_path = Config.CATALOG_PATH
 
         # Crear estructura de carpetas con fecha actual
+        # Estructura: outputs/DD-MM-YYYY/raw/data y outputs/DD-MM-YYYY/raw/reporte
         fecha_hoy = datetime.now().strftime("%d-%m-%Y")
-        self.base_output_dir = Path(Config.OUTPUT_DIR) / fecha_hoy
+        self.base_output_dir = Path(Config.OUTPUT_DIR) / fecha_hoy / "raw"
         self.data_dir = self.base_output_dir / "data"
         self.reporte_dir = self.base_output_dir / "reporte"
 

@@ -1,0 +1,445 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "fecha_creacion": "2025-10-12",
+    "descripcion": "Mapeo de nombres de datasets del INE a nombres estandarizados para base de datos",
+    "total_mappings": 87
+  },
+  "mappings": {
+    "E10000001": {
+      "nombre_original": "Temperatura máxima absoluta",
+      "nombre_estandarizado": "temp_max_absoluta",
+      "categoria": "Aire"
+    },
+    "E10000002": {
+      "nombre_original": "Temperatura mínima absoluta",
+      "nombre_estandarizado": "temp_min_absoluta",
+      "categoria": "Aire"
+    },
+    "E10000003": {
+      "nombre_original": "Temperatura media",
+      "nombre_estandarizado": "temp_med",
+      "categoria": "Aire"
+    },
+    "E10000004": {
+      "nombre_original": "Temperatura máxima media",
+      "nombre_estandarizado": "temp_max_med",
+      "categoria": "Aire"
+    },
+    "E10000005": {
+      "nombre_original": "Temperatura mínima media",
+      "nombre_estandarizado": "temp_min_med",
+      "categoria": "Aire"
+    },
+    "E10000006": {
+      "nombre_original": "Humedad relativa media mensual",
+      "nombre_estandarizado": "humedad_rel_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000007": {
+      "nombre_original": "Radiación global media",
+      "nombre_estandarizado": "rad_global_med",
+      "categoria": "Aire"
+    },
+    "E10000008": {
+      "nombre_original": "Índice UV-B promedio",
+      "nombre_estandarizado": "uvb_prom",
+      "categoria": "Aire"
+    },
+    "E10000011": {
+      "nombre_original": "Concentración de Material Particulado fino respirable (MP2,5) media mensual",
+      "nombre_estandarizado": "mp25_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000012": {
+      "nombre_original": "Concentración de Material Particulado fino respirable (MP2,5) máxima horaria anual",
+      "nombre_estandarizado": "mp25_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000013": {
+      "nombre_original": "Concentración de Material Particulado fino respirable (MP2,5) mínima horaria anual",
+      "nombre_estandarizado": "mp25_min_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000014": {
+      "nombre_original": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 50",
+      "nombre_estandarizado": "mp25_perc50",
+      "categoria": "Aire"
+    },
+    "E10000015": {
+      "nombre_original": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 90",
+      "nombre_estandarizado": "mp25_perc90",
+      "categoria": "Aire"
+    },
+    "E10000016": {
+      "nombre_original": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 95",
+      "nombre_estandarizado": "mp25_perc95",
+      "categoria": "Aire"
+    },
+    "E10000017": {
+      "nombre_original": "Concentración de Material Particulado fino respirable (MP2,5) al Percentil 98",
+      "nombre_estandarizado": "mp25_perc98",
+      "categoria": "Aire"
+    },
+    "E10000025": {
+      "nombre_original": "Concentración de material particulado respirable (MP10) media mensual",
+      "nombre_estandarizado": "mp10_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000026": {
+      "nombre_original": "Concentración de material particulado respirable (MP10) máxima horaria anual",
+      "nombre_estandarizado": "mp10_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000027": {
+      "nombre_original": "Concentración de material particulado respirable (MP10) mínima horaria anual",
+      "nombre_estandarizado": "mp10_min_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000028": {
+      "nombre_original": "Concentración de material particulado respirable (MP10) al percentil 50",
+      "nombre_estandarizado": "mp10_perc50",
+      "categoria": "Aire"
+    },
+    "E10000029": {
+      "nombre_original": "Concentración de material particulado respirable (MP10) al percentil 90",
+      "nombre_estandarizado": "mp10_perc90",
+      "categoria": "Aire"
+    },
+    "E10000030": {
+      "nombre_original": "Concentración de material particulado respirable (MP10) al percentil 95",
+      "nombre_estandarizado": "mp10_perc95",
+      "categoria": "Aire"
+    },
+    "E10000031": {
+      "nombre_original": "Concentración de material particulado respirable (MP10) al percentil 98",
+      "nombre_estandarizado": "mp10_perc98",
+      "categoria": "Aire"
+    },
+    "E10000038": {
+      "nombre_original": "Concentración de ozono (O3) media mensual",
+      "nombre_estandarizado": "o3_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000039": {
+      "nombre_original": "Concentración de ozono (O3) máxima horaria anual",
+      "nombre_estandarizado": "o3_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000040": {
+      "nombre_original": "Concentración de ozono (O3) mínima horaria anual",
+      "nombre_estandarizado": "o3_min_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000041": {
+      "nombre_original": "Concentración de ozono (O3) al percentil 50",
+      "nombre_estandarizado": "o3_perc50",
+      "categoria": "Aire"
+    },
+    "E10000042": {
+      "nombre_original": "Concentración de ozono (O3) al percentil 90",
+      "nombre_estandarizado": "o3_perc90",
+      "categoria": "Aire"
+    },
+    "E10000043": {
+      "nombre_original": "Concentración de ozono (O3) al percentil 95",
+      "nombre_estandarizado": "o3_perc95",
+      "categoria": "Aire"
+    },
+    "E10000044": {
+      "nombre_original": "Concentración de ozono (O3) al percentil 98",
+      "nombre_estandarizado": "o3_perc98",
+      "categoria": "Aire"
+    },
+    "E10000045": {
+      "nombre_original": "Concentración de ozono (O3) al percentil 99",
+      "nombre_estandarizado": "o3_perc99",
+      "categoria": "Aire"
+    },
+    "E10000046": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) media mensual",
+      "nombre_estandarizado": "so2_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000047": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) máxima horaria anual",
+      "nombre_estandarizado": "so2_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000048": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) mínima anual",
+      "nombre_estandarizado": "so2_min_anual",
+      "categoria": "Aire"
+    },
+    "E10000049": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) al percentil 50",
+      "nombre_estandarizado": "so2_perc50",
+      "categoria": "Aire"
+    },
+    "E10000050": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) al percentil 90",
+      "nombre_estandarizado": "so2_perc90",
+      "categoria": "Aire"
+    },
+    "E10000051": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) al percentil 95",
+      "nombre_estandarizado": "so2_perc95",
+      "categoria": "Aire"
+    },
+    "E10000052": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) al percentil 99",
+      "nombre_estandarizado": "so2_perc99",
+      "categoria": "Aire"
+    },
+    "E10000053": {
+      "nombre_original": "Concentración de dióxido de nitrógeno (NO2) media mensual",
+      "nombre_estandarizado": "no2_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000054": {
+      "nombre_original": "Concentración de dióxido de nitrógeno (NO2) máxima horaria anual",
+      "nombre_estandarizado": "no2_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000055": {
+      "nombre_original": "Concentración de dióxido de nitrógeno (NO2) mínima horaria anual",
+      "nombre_estandarizado": "no2_min_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000056": {
+      "nombre_original": "Concentración de dióxido de nitrógeno (NO2) al percentil 50",
+      "nombre_estandarizado": "no2_perc50",
+      "categoria": "Aire"
+    },
+    "E10000057": {
+      "nombre_original": "Concentración de dióxido de nitrógeno (NO2) al percentil 90",
+      "nombre_estandarizado": "no2_perc90",
+      "categoria": "Aire"
+    },
+    "E10000058": {
+      "nombre_original": "Concentración de Dióxido de Nitrógeno (NO2) al percentil 98",
+      "nombre_estandarizado": "no2_perc98",
+      "categoria": "Aire"
+    },
+    "E10000059": {
+      "nombre_original": "Concentración de dióxido de nitrógeno (NO2) al percentil 99",
+      "nombre_estandarizado": "no2_perc99",
+      "categoria": "Aire"
+    },
+    "E10000066": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) media mensual",
+      "nombre_estandarizado": "co_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000067": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) máxima horaria anual",
+      "nombre_estandarizado": "co_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000068": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) mínima horaria anual",
+      "nombre_estandarizado": "co_min_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000069": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) al percentil 50",
+      "nombre_estandarizado": "co_perc50",
+      "categoria": "Aire"
+    },
+    "E10000070": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) al percentil 90",
+      "nombre_estandarizado": "co_perc90",
+      "categoria": "Aire"
+    },
+    "E10000071": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) al percentil 95",
+      "nombre_estandarizado": "co_perc95",
+      "categoria": "Aire"
+    },
+    "E10000072": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) al percentil 98",
+      "nombre_estandarizado": "co_perc98",
+      "categoria": "Aire"
+    },
+    "E10000073": {
+      "nombre_original": "Concentración de monóxido de carbono (CO) al percentil 99",
+      "nombre_estandarizado": "co_perc99",
+      "categoria": "Aire"
+    },
+    "E10000074": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) media mensua",
+      "nombre_estandarizado": "no_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000075": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) máxima horaria anual",
+      "nombre_estandarizado": "no_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000076": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) mínima horaria anual",
+      "nombre_estandarizado": "no_min_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000077": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) al percentil 50",
+      "nombre_estandarizado": "no_perc50",
+      "categoria": "Aire"
+    },
+    "E10000078": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) al percentil 90",
+      "nombre_estandarizado": "no_perc90",
+      "categoria": "Aire"
+    },
+    "E10000079": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) al percentil 98",
+      "nombre_estandarizado": "no_perc98",
+      "categoria": "Aire"
+    },
+    "E10000080": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) al percentil 99",
+      "nombre_estandarizado": "no_perc99",
+      "categoria": "Aire"
+    },
+    "E10000081": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) media mensual",
+      "nombre_estandarizado": "nox_med_mens",
+      "categoria": "Aire"
+    },
+    "E10000082": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) máxima horaria anual",
+      "nombre_estandarizado": "nox_max_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000083": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) mínima horaria anual",
+      "nombre_estandarizado": "nox_min_hor_anual",
+      "categoria": "Aire"
+    },
+    "E10000084": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) al percentil 50",
+      "nombre_estandarizado": "nox_perc50",
+      "categoria": "Aire"
+    },
+    "E10000085": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) al percentil 90",
+      "nombre_estandarizado": "nox_perc90",
+      "categoria": "Aire"
+    },
+    "E10000086": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) al percentil 98",
+      "nombre_estandarizado": "nox_perc98",
+      "categoria": "Aire"
+    },
+    "E10000087": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) al percentil 99",
+      "nombre_estandarizado": "nox_perc99",
+      "categoria": "Aire"
+    },
+    "E10000088": {
+      "nombre_original": "Concentración de dióxido de azufre (SO2) al percentil 98",
+      "nombre_estandarizado": "so2_perc98",
+      "categoria": "Aire"
+    },
+    "E10000089": {
+      "nombre_original": "Concentración de dióxido de nitrógeno (NO2) al percentil 95",
+      "nombre_estandarizado": "no2_perc95",
+      "categoria": "Aire"
+    },
+    "E10000090": {
+      "nombre_original": "Concentración de monóxido de nitrógeno (NO) al percentil 95",
+      "nombre_estandarizado": "no_perc95",
+      "categoria": "Aire"
+    },
+    "E10000091": {
+      "nombre_original": "Concentración de óxidos de nitrógeno (NOx) al percentil 95",
+      "nombre_estandarizado": "nox_perc95",
+      "categoria": "Aire"
+    },
+    "E10000092": {
+      "nombre_original": "Número de eventos de olas de calor",
+      "nombre_estandarizado": "num_eventos_de_olas_de_calor",
+      "categoria": "Aire"
+    },
+    "E20101001": {
+      "nombre_original": "Caudal medio de aguas corrientes",
+      "nombre_estandarizado": "caudal_medio_de_aguas_corrientes",
+      "categoria": "Agua"
+    },
+    "E20103001": {
+      "nombre_original": "Volumen del embalse, según embalse",
+      "nombre_estandarizado": "volumen_del_embalse_por_embalse",
+      "categoria": "Agua"
+    },
+    "E20104001": {
+      "nombre_original": "Nivel estático de aguas subterráneas",
+      "nombre_estandarizado": "nivel_estatico_de_aguas_subterraneas",
+      "categoria": "Agua"
+    },
+    "E20105001": {
+      "nombre_original": "Cantidad de agua caída",
+      "nombre_estandarizado": "cantidad_de_agua_caida",
+      "categoria": "Agua"
+    },
+    "E20105002": {
+      "nombre_original": "Altura de nieve equivalente en agua",
+      "nombre_estandarizado": "altura_nieve_equivalente_en_agua",
+      "categoria": "Agua"
+    },
+    "E20105003": {
+      "nombre_original": "Evaporación real, según estación",
+      "nombre_estandarizado": "evaporacion_real_por_estacion",
+      "categoria": "Agua"
+    },
+    "E20106001": {
+      "nombre_original": "Número de glaciares, según cuenca hidrográfica",
+      "nombre_estandarizado": "num_glaciares_por_cuenca",
+      "categoria": "Agua"
+    },
+    "E20106002": {
+      "nombre_original": "Superficie de glaciares, según cuenca hidrográfica",
+      "nombre_estandarizado": "superficie_de_glaciares_por_cuenca",
+      "categoria": "Agua"
+    },
+    "E20106003": {
+      "nombre_original": "Volumen de hielo glaciar estimado, según cuenca hidrográfica",
+      "nombre_estandarizado": "volumen_de_hielo_glaciar_estimado_por_cuenca",
+      "categoria": "Agua"
+    },
+    "E20106004": {
+      "nombre_original": "Volumen de agua de glaciares estimada, según cuenca hidrográfica",
+      "nombre_estandarizado": "volumen_de_agua_de_glaciares_estimada_por_cuenca",
+      "categoria": "Agua"
+    },
+    "E20200015": {
+      "nombre_original": "Nivel medio del mar",
+      "nombre_estandarizado": "nivel_medio_del_mar",
+      "categoria": "Agua"
+    },
+    "E20200016": {
+      "nombre_original": "Temperatura superficial del mar",
+      "nombre_estandarizado": "temp_superficial_del_mar",
+      "categoria": "Agua"
+    },
+    "E20200002": {
+      "nombre_original": "Concentración de metales disueltos en la matriz acuosa",
+      "nombre_estandarizado": "metales_disueltos_en_la_matriz_acuosa",
+      "categoria": "Agua"
+    },
+    "E20200005": {
+      "nombre_original": "Concentración de coliformes fecales en matriz acuosa",
+      "nombre_estandarizado": "coliformes_fecales_en_matriz_acuosa",
+      "categoria": "Agua"
+    },
+    "E20200006": {
+      "nombre_original": "Concentración de metales totales en la matriz sedimentaria",
+      "nombre_estandarizado": "metales_totales_en_la_matriz_sedimentaria",
+      "categoria": "Agua"
+    },
+    "E20200011": {
+      "nombre_original": "Concentración de coliformes fecales en matriz biológica",
+      "nombre_estandarizado": "coliformes_fecales_en_matriz_biologica",
+      "categoria": "Agua"
+    }
+  }
+}

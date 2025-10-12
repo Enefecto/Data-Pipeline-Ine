@@ -1,6 +1,8 @@
 services:
+  # Servicio 1: Scraper - Descarga datos raw del INE
   scraper:
     build: .
+    container_name: ine-scraper
     volumes:
       - ./outputs:/app/outputs
       - ./ine_catalog.json:/app/ine_catalog.json
@@ -8,6 +10,8 @@ services:
       - ./config.py:/app/config.py
     environment:
       - PYTHONUNBUFFERED=1
+      # Pipeline
+      - PIPELINE_STAGE=raw
       # Configuración de concurrencia
       - MAX_CONCURRENT_BROWSERS=4
       - DOWNLOAD_TIMEOUT=60
@@ -22,3 +26,21 @@ services:
       # - MAX_DATASETS=5  # Descomentar para testing
       # Base de datos (para futuro uso)
       # - DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+
+  # Servicio 2: Cleaner - Limpia y estandariza datos
+  cleaner:
+    build: .
+    container_name: ine-cleaner
+    command: python clean_data.py
+    volumes:
+      - ./outputs:/app/outputs
+      - ./dataset_name_mapping.json:/app/dataset_name_mapping.json
+      - ./clean_data.py:/app/clean_data.py
+      - ./config.py:/app/config.py
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PIPELINE_STAGE=cleaned
+      - OUTPUT_DIR=/app/outputs
+    depends_on:
+      scraper:
+        condition: service_completed_successfully

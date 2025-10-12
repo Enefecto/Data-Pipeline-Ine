@@ -1,11 +1,19 @@
 """
 Configuración del INE Scraper
 Optimizado para AWS Lambda y ejecución concurrente
+Incluye configuración para pipeline de datos multi-etapa
 """
 import os
 from pathlib import Path
 
 class Config:
+    # ===== CONFIGURACIÓN DE PIPELINE =====
+    # Etapas del pipeline de procesamiento
+    PIPELINE_STAGES = ['raw', 'cleaned']
+
+    # Etapa actual (puede sobreescribirse con variable de entorno)
+    CURRENT_STAGE = os.getenv('PIPELINE_STAGE', 'raw')
+
     # ===== CONFIGURACIÓN DE CONCURRENCIA =====
     # Número de navegadores/workers concurrentes
     # Para AWS Lambda: 2-4 navegadores es óptimo (balance costo/velocidad)
