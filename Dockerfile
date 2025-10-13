@@ -2,6 +2,9 @@ FROM mcr.microsoft.com/playwright/python:v1.40.0-jammy
 
 WORKDIR /app
 
+# Configurar PYTHONPATH para que Python encuentre los módulos en /app
+ENV PYTHONPATH=/app
+
 # Instalar dependencias
 RUN apt-get update && apt-get install -y \
     libxkbcommon0 \
