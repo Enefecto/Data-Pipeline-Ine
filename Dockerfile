@@ -12,14 +12,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar archivos del proyecto
-COPY ine_catalog.json .
-COPY dataset_name_mapping.json .
+COPY dictionary/ ./dictionary/
 COPY config.py .
-COPY ine_scraper.py .
-COPY clean_data.py .
+COPY steps/ ./steps/
 
 # Crear directorio de salida
 RUN mkdir -p /app/outputs
 
-# Comando por defecto (puede ser sobreescrito en docker-compose)
-CMD ["python", "ine_scraper.py"]
+# Comando por defecto: Paso 1 del pipeline
+CMD ["python", "steps/step1_scraper.py"]

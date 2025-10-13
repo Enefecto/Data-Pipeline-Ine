@@ -1,12 +1,13 @@
 services:
-  # Servicio 1: Scraper - Descarga datos raw del INE
+  # PASO 1: Scraper - Descarga datos raw del INE
   scraper:
     build: .
     container_name: ine-scraper
+    command: python steps/step1_scraper.py
     volumes:
       - ./outputs:/app/outputs
-      - ./ine_catalog.json:/app/ine_catalog.json
-      - ./ine_scraper.py:/app/ine_scraper.py
+      - ./dictionary:/app/dictionary
+      - ./steps:/app/steps
       - ./config.py:/app/config.py
     environment:
       - PYTHONUNBUFFERED=1
@@ -17,7 +18,7 @@ services:
       - DOWNLOAD_TIMEOUT=60
       - DELAY_BETWEEN_DOWNLOADS=1.0
       # Configuración de archivos
-      - CATALOG_PATH=/app/ine_catalog.json
+      - CATALOG_PATH=/app/dictionary/ine_catalog.json
       - OUTPUT_DIR=/app/outputs
       - SAVE_LOCAL_FILES=true
       # Configuración del navegador
@@ -27,20 +28,37 @@ services:
       # Base de datos (para futuro uso)
       # - DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 
-  # Servicio 2: Cleaner - Limpia y estandariza datos
-  cleaner:
+  # PASO 2: Standardizer - Estandariza nombres de archivos
+  standardizer:
     build: .
-    container_name: ine-cleaner
-    command: python clean_data.py
+    container_name: ine-standardizer
+    command: python steps/step2_standardize_names.py
     volumes:
       - ./outputs:/app/outputs
-      - ./dataset_name_mapping.json:/app/dataset_name_mapping.json
-      - ./clean_data.py:/app/clean_data.py
+      - ./dictionary:/app/dictionary
+      - ./steps:/app/steps
       - ./config.py:/app/config.py
     environment:
       - PYTHONUNBUFFERED=1
-      - PIPELINE_STAGE=cleaned
+      - PIPELINE_STAGE=standardized
       - OUTPUT_DIR=/app/outputs
     depends_on:
       scraper:
+        condition: service_completed_successfully
+
+  # PASO 3: Column Remover - Elimina columnas flag_codes y flags
+  column_remover:
+    build: .
+    container_name: ine-column-remover
+    command: python steps/step3_remove_columns.py
+    volumes:
+      - ./outputs:/app/outputs
+      - ./steps:/app/steps
+      - ./config.py:/app/config.py
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PIPELINE_STAGE=columns_removed
+      - OUTPUT_DIR=/app/outputs
+    depends_on:
+      standardizer:
         condition: service_completed_successfully

@@ -1,0 +1,796 @@
+# Listado de Columnas por Dataset
+# Generado: 12-10-2025 22:14:51
+# Carpeta: outputs/13-10-2025/cleaned/data
+# Total datasets: 87
+
+================================================================================
+
+altura_nieve_equivalente_en_agua
+﻿"DTI_CL_DIA"
+Día
+DTI_CL_T010EST_NIVO
+Estaciones nivométricas
+Value
+Flag Codes
+Flags
+
+cantidad_de_agua_caida
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+caudal_medio_de_aguas_corrientes
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_AGUAS_CORRIENTES
+Aguas Corrientes
+DTI_CL_ESTACIONES_FLUVIOMETRICAS
+Estaciones Fluviométricas
+Value
+Flag Codes
+Flags
+
+co_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+co_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+co_min_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+co_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+co_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+co_perc95
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+co_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+co_perc99
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+coliformes_fecales_en_matriz_acuosa
+﻿"DTI_CL_DIA"
+Día
+DTI_CL_T013EST_POAL
+Estaciones POAL
+Value
+Flag Codes
+Flags
+
+coliformes_fecales_en_matriz_biologica
+﻿"DTI_CL_DIA"
+Día
+DTI_CL_T013EST_POAL
+Estaciones POAL
+Value
+Flag Codes
+Flags
+
+evaporacion_real_por_estacion
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACION
+Estación
+Value
+Flag Codes
+Flags
+
+humedad_rel_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+metales_disueltos_en_la_matriz_acuosa
+﻿"DTI_CL_DIA"
+Día
+DTI_CL_T013EST_POAL
+Estaciones POAL
+DTI_CL_T014PARAM_POAL
+Parámetros POAL
+Value
+Flag Codes
+Flags
+
+metales_totales_en_la_matriz_sedimentaria
+﻿"DTI_CL_DIA"
+Día
+DTI_CL_T013EST_POAL
+Estaciones POAL
+DTI_CL_T014PARAM_POAL
+Parámetros POAL
+Value
+Flag Codes
+Flags
+
+mp10_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp10_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp10_min_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp10_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp10_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp10_perc95
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp10_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp25_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp25_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp25_min_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp25_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp25_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp25_perc95
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+mp25_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nivel_estatico_de_aguas_subterraneas
+﻿"DTI_CL_DIA"
+Día
+DTI_CL_T009ESTACION_POZO
+Estaciones Pozo
+Value
+Flag Codes
+Flags
+
+nivel_medio_del_mar
+﻿"DTI_CL_MES"
+Mes
+CL_T017ESTACION_SHOA
+Estación ambiental SHOA
+Value
+Flag Codes
+Flags
+
+no2_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no2_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no2_min_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no2_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no2_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no2_perc95
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no2_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no2_perc99
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_min_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_perc95
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+no_perc99
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_min_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_perc95
+﻿"DTI_CL_MES"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+nox_perc99
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+num_eventos_de_olas_de_calor
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+num_glaciares_por_cuenca
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_CUENCAS
+Cuencas
+Value
+Flag Codes
+Flags
+
+o3_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+o3_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+o3_min_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+o3_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+o3_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+o3_perc95
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+o3_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+o3_perc99
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+rad_global_med
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+so2_max_hor_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+so2_med_mens
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+so2_min_anual
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+so2_perc50
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+so2_perc90
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+so2_perc95
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+so2_perc98
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+so2_perc99
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_EST_MONITOREO_AIRE
+Estaciones de monitoreo del aire
+Value
+Flag Codes
+Flags
+
+superficie_de_glaciares_por_cuenca
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_CUENCAS
+Cuencas
+Value
+Flag Codes
+Flags
+
+temp_max_absoluta
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+temp_max_med
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+temp_med
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+temp_min_absoluta
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+temp_min_med
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+temp_superficial_del_mar
+﻿"DTI_CL_MES"
+Mes
+CL_T017ESTACION_SHOA
+Estación ambiental SHOA
+Value
+Flag Codes
+Flags
+
+uvb_prom
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_ESTACIONES_METEO
+Estaciones meteorológicas DMC
+Value
+Flag Codes
+Flags
+
+volumen_de_agua_de_glaciares_estimada_por_cuenca
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_CUENCAS
+Cuencas
+Value
+Flag Codes
+Flags
+
+volumen_de_hielo_glaciar_estimado_por_cuenca
+﻿"DTI_CL_ANO"
+Año
+DTI_CL_CUENCAS
+Cuencas
+Value
+Flag Codes
+Flags
+
+volumen_del_embalse_por_embalse
+﻿"DTI_CL_MES"
+Mes
+DTI_CL_EMBALSE
+Embalse
+Value
+Flag Codes
+Flags
+

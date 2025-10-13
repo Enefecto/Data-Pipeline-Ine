@@ -15,7 +15,7 @@ from config import Config
 
 class NameStandardizer:
     def __init__(self):
-        self.mapping_path = "/app/dataset_name_mapping.json"
+        self.mapping_path = "/app/dictionary/dataset_name_mapping.json"
         self.output_base = Path(Config.OUTPUT_DIR)
 
         # Buscar la carpeta de fecha más reciente
