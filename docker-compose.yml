@@ -62,3 +62,21 @@ services:
     depends_on:
       standardizer:
         condition: service_completed_successfully
+
+  # PASO 4: Station Filter - Filtra estaciones con datos insuficientes (≤2 registros)
+  station_filter:
+    build: .
+    container_name: ine-station-filter
+    command: python steps/step4_filter_stations.py
+    volumes:
+      - ./outputs:/app/outputs
+      - ./dictionary:/app/dictionary
+      - ./steps:/app/steps
+      - ./config.py:/app/config.py
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PIPELINE_STAGE=filtered_stations
+      - OUTPUT_DIR=/app/outputs
+    depends_on:
+      column_remover:
+        condition: service_completed_successfully

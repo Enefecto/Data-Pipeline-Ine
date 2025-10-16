@@ -1,0 +1,411 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "fecha_creacion": "2025-10-16",
+    "descripcion": "Mapeo de columnas de estaciones para cada dataset del INE",
+    "proposito": "Identificar qué columna contiene los códigos de estaciones para filtrado de datos",
+    "total_mappings": 87
+  },
+  "station_column_types": {
+    "DTI_CL_EST_MONITOREO_AIRE": {
+      "descripcion": "Estaciones de monitoreo del aire",
+      "nombre_legible": "Estaciones de monitoreo del aire",
+      "tipo": "contaminantes_aire"
+    },
+    "DTI_CL_ESTACIONES_METEO": {
+      "descripcion": "Estaciones meteorológicas DMC",
+      "nombre_legible": "Estaciones meteorológicas DMC",
+      "tipo": "meteorologia"
+    },
+    "DTI_CL_ESTACIONES_FLUVIOMETRICAS": {
+      "descripcion": "Estaciones Fluviométricas",
+      "nombre_legible": "Estaciones Fluviométricas",
+      "tipo": "aguas_corrientes"
+    },
+    "DTI_CL_T010EST_NIVO": {
+      "descripcion": "Estaciones nivométricas",
+      "nombre_legible": "Estaciones nivométricas",
+      "tipo": "nieve"
+    },
+    "DTI_CL_T013EST_POAL": {
+      "descripcion": "Estaciones POAL",
+      "nombre_legible": "Estaciones POAL",
+      "tipo": "calidad_agua"
+    },
+    "DTI_CL_EMBALSE": {
+      "descripcion": "Embalse",
+      "nombre_legible": "Embalse",
+      "tipo": "embalses"
+    },
+    "DTI_CL_CUENCAS": {
+      "descripcion": "Cuencas",
+      "nombre_legible": "Cuencas",
+      "tipo": "glaciares"
+    },
+    "CL_T017ESTACION_SHOA": {
+      "descripcion": "Estación ambiental SHOA",
+      "nombre_legible": "Estación ambiental SHOA",
+      "tipo": "mar"
+    },
+    "DTI_CL_ESTACION": {
+      "descripcion": "Estación",
+      "nombre_legible": "Estación",
+      "tipo": "general"
+    },
+    "DTI_CL_T009ESTACION_POZO": {
+      "descripcion": "Estaciones Pozo",
+      "nombre_legible": "Estaciones Pozo",
+      "tipo": "aguas_subterraneas"
+    }
+  },
+  "mappings": {
+    "temp_max_absoluta": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "temp_min_absoluta": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "temp_med": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "temp_max_med": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "temp_min_med": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "humedad_rel_med_mens": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "rad_global_med": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "uvb_prom": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "num_eventos_de_olas_de_calor": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Aire"
+    },
+    "cantidad_de_agua_caida": {
+      "station_column": "DTI_CL_ESTACIONES_METEO",
+      "categoria": "Agua"
+    },
+    "mp25_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp25_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp25_min_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp25_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp25_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp25_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp25_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp10_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp10_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp10_min_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp10_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp10_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp10_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "mp10_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_min_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "o3_perc99": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_min_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "so2_perc99": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_min_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no2_perc99": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_min_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "co_perc99": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_min_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "no_perc99": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_med_mens": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_max_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_min_hor_anual": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_perc50": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_perc90": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_perc95": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_perc98": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "nox_perc99": {
+      "station_column": "DTI_CL_EST_MONITOREO_AIRE",
+      "categoria": "Aire"
+    },
+    "caudal_medio_de_aguas_corrientes": {
+      "station_column": "DTI_CL_ESTACIONES_FLUVIOMETRICAS",
+      "categoria": "Agua"
+    },
+    "volumen_del_embalse_por_embalse": {
+      "station_column": "DTI_CL_EMBALSE",
+      "categoria": "Agua"
+    },
+    "nivel_estatico_de_aguas_subterraneas": {
+      "station_column": "DTI_CL_T009ESTACION_POZO",
+      "categoria": "Agua"
+    },
+    "altura_nieve_equivalente_en_agua": {
+      "station_column": "DTI_CL_T010EST_NIVO",
+      "categoria": "Agua"
+    },
+    "evaporacion_real_por_estacion": {
+      "station_column": "DTI_CL_ESTACION",
+      "categoria": "Agua"
+    },
+    "num_glaciares_por_cuenca": {
+      "station_column": "DTI_CL_CUENCAS",
+      "categoria": "Agua"
+    },
+    "superficie_de_glaciares_por_cuenca": {
+      "station_column": "DTI_CL_CUENCAS",
+      "categoria": "Agua"
+    },
+    "volumen_de_hielo_glaciar_estimado_por_cuenca": {
+      "station_column": "DTI_CL_CUENCAS",
+      "categoria": "Agua"
+    },
+    "volumen_de_agua_de_glaciares_estimada_por_cuenca": {
+      "station_column": "DTI_CL_CUENCAS",
+      "categoria": "Agua"
+    },
+    "nivel_medio_del_mar": {
+      "station_column": "CL_T017ESTACION_SHOA",
+      "categoria": "Agua"
+    },
+    "temp_superficial_del_mar": {
+      "station_column": "CL_T017ESTACION_SHOA",
+      "categoria": "Agua"
+    },
+    "metales_disueltos_en_la_matriz_acuosa": {
+      "station_column": "DTI_CL_T013EST_POAL",
+      "categoria": "Agua"
+    },
+    "coliformes_fecales_en_matriz_acuosa": {
+      "station_column": "DTI_CL_T013EST_POAL",
+      "categoria": "Agua"
+    },
+    "metales_totales_en_la_matriz_sedimentaria": {
+      "station_column": "DTI_CL_T013EST_POAL",
+      "categoria": "Agua"
+    },
+    "coliformes_fecales_en_matriz_biologica": {
+      "station_column": "DTI_CL_T013EST_POAL",
+      "categoria": "Agua"
+    }
+  }
+}
