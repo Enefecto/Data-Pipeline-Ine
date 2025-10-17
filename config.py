@@ -5,6 +5,10 @@ Incluye configuración para pipeline de datos multi-etapa
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 class Config:
     # ===== CONFIGURACIÓN DE PIPELINE =====

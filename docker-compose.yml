@@ -98,3 +98,23 @@ services:
     depends_on:
       station_filter:
         condition: service_completed_successfully
+
+  # PASO 6: Database Uploader - Carga vistas a PostgreSQL (Neon)
+  db_uploader:
+    build: .
+    container_name: ine-db-uploader
+    command: python steps/step6_upload_to_db.py
+    volumes:
+      - ./outputs:/app/outputs
+      - ./steps:/app/steps
+      - ./config.py:/app/config.py
+      - ./.env:/app/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PIPELINE_STAGE=uploaded_to_db
+      - OUTPUT_DIR=/app/outputs
+    env_file:
+      - .env
+    depends_on:
+      view_creator:
+        condition: service_completed_successfully
