@@ -152,7 +152,7 @@ class INEScraperConcurrent:
             # PASO 4: Buscar iframe del modal
             paso_actual = "acceso a modal (iframe)"
             iframe_locator = page.frame_locator('iframe#DialogFrame')
-            await iframe_locator.locator('body').wait_for(timeout=5000, state='attached')
+            await iframe_locator.locator('body').wait_for(timeout=30000, state='attached')
 
             # PASO 5: Buscar botón de descarga
             paso_actual = "búsqueda de botón Descargar"
@@ -361,7 +361,75 @@ class INEScraperConcurrent:
 
         return self.resultados, elapsed
 
-    def generar_reporte(self, tiempo_total_segundos: float):
+    async def retry_failed_datasets(self):
+        """Reintenta descargar los datasets que fallaron en el primer intento"""
+        fallidos = self.resultados['fallidos'].copy()
+
+        if not fallidos:
+            return 0, 0  # No hay nada que reintentar
+
+        num_fallidos = len(fallidos)
+        print("\n" + "=" * 80)
+        print(f"🔄 REINTENTANDO DATASETS FALLIDOS ({num_fallidos})")
+        print("=" * 80 + "\n")
+
+        # Limpiar la lista de fallidos actual (se rellenará con los que sigan fallando)
+        self.resultados['fallidos'] = []
+
+        start_time = time.time()
+
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=Config.HEADLESS)
+            context = await browser.new_context(
+                viewport={'width': Config.VIEWPORT_WIDTH, 'height': Config.VIEWPORT_HEIGHT},
+                user_agent=Config.USER_AGENT,
+                accept_downloads=True
+            )
+            page = await context.new_page()
+            page.set_default_timeout(Config.DOWNLOAD_TIMEOUT * 1000)
+
+            for idx, dataset_fallido in enumerate(fallidos, 1):
+                # Reconstruir la información del dataset desde el resultado fallido
+                dataset_info = {
+                    'id': dataset_fallido['id'],
+                    'url': dataset_fallido['url'],
+                    'nombre': dataset_fallido['nombre'],
+                    'categoria': dataset_fallido.get('categoria', 'general')
+                }
+
+                # Intentar descargar nuevamente
+                resultado = await self.descargar_dataset(page, dataset_info, idx, num_fallidos, worker_id=0)
+
+                # Actualizar resultados
+                if resultado['status'] == 'exitoso':
+                    # Marcar que fue exitoso después de reintento
+                    resultado['fue_reintentado'] = True
+                    resultado['intento_previo_fallo'] = dataset_fallido.get('error', 'Unknown')
+                    self.resultados['exitosos'].append(resultado)
+                else:
+                    # Sigue fallando, agregar a la lista de fallidos
+                    resultado['fue_reintentado'] = True
+                    self.resultados['fallidos'].append(resultado)
+
+                # Pausa entre reintentos
+                await asyncio.sleep(Config.DELAY_BETWEEN_DOWNLOADS)
+
+            await context.close()
+            await browser.close()
+
+        elapsed = time.time() - start_time
+
+        # Calcular cuántos tuvieron éxito en el reintento
+        exitosos_reintento = sum(1 for r in self.resultados['exitosos'] if r.get('fue_reintentado', False))
+        fallidos_reintento = len(self.resultados['fallidos'])
+
+        print("\n" + "=" * 80)
+        print(f"✅ REINTENTO COMPLETADO: {exitosos_reintento} exitosos, {fallidos_reintento} fallidos")
+        print("=" * 80 + "\n")
+
+        return exitosos_reintento, elapsed
+
+    def generar_reporte(self, tiempo_total_segundos: float, exitosos_reintento: int = 0):
         """Genera reporte de resultados en consola y JSON"""
         exitosos = len(self.resultados['exitosos'])
         fallidos = len(self.resultados['fallidos'])
@@ -382,7 +450,10 @@ class INEScraperConcurrent:
         print("=" * 80)
         print(f"\n📊 RESUMEN:")
         print(f"   Total de datasets:        {total}")
-        print(f"   ✓ Exitosos:               {exitosos}")
+        if exitosos_reintento > 0:
+            print(f"   ✓ Exitosos:               {exitosos} ({exitosos_reintento} reintentado(s))")
+        else:
+            print(f"   ✓ Exitosos:               {exitosos}")
         print(f"   ✗ Fallidos:               {fallidos}")
         print(f"   Tasa de éxito:            {tasa_exito:.1f}%")
         print(f"\n⏱️  TIEMPOS:")
@@ -420,6 +491,7 @@ class INEScraperConcurrent:
             "resumen": {
                 "total_datasets": total,
                 "exitosos": exitosos,
+                "exitosos_reintentados": exitosos_reintento,
                 "fallidos": fallidos,
                 "tasa_exito_porcentaje": round(tasa_exito, 2)
             },
@@ -460,15 +532,25 @@ async def main():
     scraper = INEScraperConcurrent()
     scraper.cargar_catalogo()
 
+    # Ejecutar descarga inicial
     resultados, tiempo_total = await scraper.scrape_all_concurrent()
 
-    scraper.generar_reporte(tiempo_total)
+    exitosos_reintento = 0
+    tiempo_reintento = 0
+
+    # Si hay fallidos, intentar reintentar automáticamente
+    if len(scraper.resultados['fallidos']) > 0:
+        exitosos_reintento, tiempo_reintento = await scraper.retry_failed_datasets()
+        tiempo_total += tiempo_reintento
+
+    # Generar reporte final con información de reintentos
+    scraper.generar_reporte(tiempo_total, exitosos_reintento)
 
     print("✅ Proceso completado!")
     if Config.SAVE_LOCAL_FILES:
         fecha_hoy = datetime.now().strftime("%d-%m-%Y")
-        print(f"📁 Archivos CSV: outputs/{fecha_hoy}/data/")
-        print(f"📄 Reporte JSON: outputs/{fecha_hoy}/reporte/")
+        print(f"📁 Archivos CSV: outputs/{fecha_hoy}/raw/data/")
+        print(f"📄 Reporte JSON: outputs/{fecha_hoy}/raw/reporte/")
 
 
 if __name__ == "__main__":

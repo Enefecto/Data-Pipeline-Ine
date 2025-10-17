@@ -80,3 +80,21 @@ services:
     depends_on:
       column_remover:
         condition: service_completed_successfully
+
+  # PASO 5: View Creator - Genera vistas consolidadas en CSV
+  view_creator:
+    build: .
+    container_name: ine-view-creator
+    command: python steps/step5_create_views.py
+    volumes:
+      - ./outputs:/app/outputs
+      - ./dictionary:/app/dictionary
+      - ./steps:/app/steps
+      - ./config.py:/app/config.py
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PIPELINE_STAGE=views
+      - OUTPUT_DIR=/app/outputs
+    depends_on:
+      station_filter:
+        condition: service_completed_successfully

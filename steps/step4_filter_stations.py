@@ -120,6 +120,15 @@ class StationFilter:
                     "error": str(e)
                 }
 
+            # VALIDACIÓN: Eliminar registros con estación vacía o null
+            registros_antes_null_check = len(df)
+            if station_col in df.columns:
+                df = df[df[station_col].notna() & (df[station_col] != '')]
+            registros_null_eliminados = registros_antes_null_check - len(df)
+
+            if registros_null_eliminados > 0:
+                print(f"      [INFO] Eliminados {registros_null_eliminados} registros con estación NULL/vacía")
+
             # Contar registros por estación
             station_counts = df.groupby(station_col)['Value'].count()
 
@@ -142,7 +151,8 @@ class StationFilter:
                     "estaciones_finales": estaciones_originales,
                     "estaciones_eliminadas": [],
                     "num_estaciones_eliminadas": 0,
-                    "registros_eliminados": 0
+                    "registros_eliminados": 0,
+                    "registros_null_eliminados": registros_null_eliminados
                 }
             else:
                 # Filtrar DataFrame
@@ -172,7 +182,8 @@ class StationFilter:
                     "estaciones_eliminadas": estaciones_eliminadas_detalle,
                     "num_estaciones_eliminadas": len(estaciones_a_eliminar),
                     "registros_eliminados": registros_eliminados,
-                    "porcentaje_registros_eliminados": round((registros_eliminados / registros_originales) * 100, 2)
+                    "porcentaje_registros_eliminados": round((registros_eliminados / registros_originales) * 100, 2),
+                    "registros_null_eliminados": registros_null_eliminados
                 }
 
             # Guardar archivo procesado
@@ -258,6 +269,11 @@ class StationFilter:
             r['registros_originales'] for r in self.resultados['exitosos']
         )
 
+        total_registros_null = sum(
+            r.get('registros_null_eliminados', 0)
+            for r in (self.resultados['exitosos'] + self.resultados['sin_filtrado'])
+        )
+
         porcentaje_registros_eliminados = (
             (total_registros_eliminados / total_registros_originales * 100)
             if total_registros_originales > 0 else 0
@@ -277,6 +293,7 @@ class StationFilter:
         print(f"   Umbral mínimo:                        {self.MIN_REGISTROS} registros por estación")
         print(f"   Total estaciones eliminadas:          {total_estaciones_eliminadas}")
         print(f"   Total registros eliminados:           {total_registros_eliminados:,}")
+        print(f"   Registros con estación NULL:          {total_registros_null:,}")
         print(f"   Porcentaje de datos eliminados:       {porcentaje_registros_eliminados:.2f}%")
         print(f"\nTIEMPO:")
         print(f"   Tiempo total:                         {tiempo_total_segundos:.2f}s")
@@ -321,6 +338,7 @@ class StationFilter:
             "estadisticas_filtrado": {
                 "total_estaciones_eliminadas": total_estaciones_eliminadas,
                 "total_registros_eliminados": total_registros_eliminados,
+                "total_registros_null_eliminados": total_registros_null,
                 "total_registros_originales": total_registros_originales,
                 "porcentaje_registros_eliminados": round(porcentaje_registros_eliminados, 2)
             },
