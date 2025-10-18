@@ -34,14 +34,14 @@ class DatabaseUploader:
         self.fecha_folder = fecha_folders[0]  # La más reciente
 
         # Input: vistas del paso 5
-        self.input_data_dir = self.fecha_folder / "views" / "data"
+        self.input_data_dir = self.fecha_folder / "views"
 
         if not self.input_data_dir.exists():
             raise Exception(f"No se encontró la carpeta de vistas: {self.input_data_dir}")
 
         # Output: reporte de carga
-        self.output_reporte_dir = self.fecha_folder / "uploaded_to_db" / "reporte"
-        self.output_reporte_dir.mkdir(parents=True, exist_ok=True)
+        self.reporte_dir = self.fecha_folder / "reportes"
+        self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
         # Verificar que DATABASE_URL esté configurada
         if not Config.DATABASE_URL:
@@ -268,7 +268,7 @@ class DatabaseUploader:
             "vistas_fallidas": self.resultados['fallidos']
         }
 
-        reporte_path = self.output_reporte_dir / "reporte_upload_db.json"
+        reporte_path = self.reporte_dir / "paso6_upload_to_db.json"
         with open(reporte_path, 'w', encoding='utf-8') as f:
             json.dump(reporte, f, indent=2, ensure_ascii=False)
 
@@ -291,7 +291,7 @@ def main():
         uploader.generar_reporte(tiempo_total)
 
         print("\n[OK] Carga a base de datos completada!")
-        print(f"Reporte: {uploader.output_reporte_dir}")
+        print(f"Reporte: {uploader.reporte_dir}")
 
         # Cerrar conexión
         uploader.engine.dispose()

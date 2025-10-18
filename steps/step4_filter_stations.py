@@ -1,7 +1,7 @@
 """
 Filter Stations - Filtrado de Estaciones con Datos Insuficientes
 Elimina estaciones con 2 o menos registros de cada archivo CSV
-Etapa 4 del pipeline
+(Procesamiento in-place en carpeta raw)
 """
 
 import json
@@ -29,21 +29,11 @@ class StationFilter:
             raise Exception("No se encontraron carpetas de salida para procesar")
 
         self.fecha_folder = fecha_folders[0]  # La más reciente
+        self.raw_data_dir = self.fecha_folder / "raw"
+        self.reporte_dir = self.fecha_folder / "reportes"
 
-        # Buscar la carpeta más reciente con datos procesados
-        if (self.fecha_folder / "columns_removed" / "data").exists():
-            self.input_data_dir = self.fecha_folder / "columns_removed" / "data"
-        elif (self.fecha_folder / "standardized" / "data").exists():
-            self.input_data_dir = self.fecha_folder / "standardized" / "data"
-        else:
-            self.input_data_dir = self.fecha_folder / "raw" / "data"
-
-        self.output_data_dir = self.fecha_folder / "filtered_stations" / "data"
-        self.output_reporte_dir = self.fecha_folder / "filtered_stations" / "reporte"
-
-        # Crear directorios de salida
-        self.output_data_dir.mkdir(parents=True, exist_ok=True)
-        self.output_reporte_dir.mkdir(parents=True, exist_ok=True)
+        # Crear directorio de reportes si no existe
+        self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
         # Cargar mapeo de columnas de estaciones
         mapping_path = Path(__file__).parent.parent / "dictionary" / "station_columns_mapping.json"
@@ -186,12 +176,13 @@ class StationFilter:
                     "registros_null_eliminados": registros_null_eliminados
                 }
 
-            # Guardar archivo procesado
-            output_path = self.output_data_dir / filename
-            df_filtrado.to_csv(output_path, index=False)
+            # Guardar archivo procesado in-place
+            size_original = archivo_path.stat().st_size
+            df_filtrado.to_csv(archivo_path, index=False)
+            size_final = archivo_path.stat().st_size
 
-            resultado["size_original"] = archivo_path.stat().st_size
-            resultado["size_final"] = output_path.stat().st_size
+            resultado["size_original"] = size_original
+            resultado["size_final"] = size_final
 
             return resultado
 
@@ -205,16 +196,15 @@ class StationFilter:
             }
 
     def procesar_archivos(self):
-        """Procesa todos los archivos CSV filtrando estaciones con datos insuficientes"""
-        print("Iniciando filtrado de estaciones...")
-        print(f"Carpeta entrada: {self.input_data_dir}")
-        print(f"Carpeta salida: {self.output_data_dir}")
+        """Procesa todos los archivos CSV filtrando estaciones con datos insuficientes (in-place)"""
+        print("Iniciando filtrado de estaciones (in-place)...")
+        print(f"Carpeta raw: {self.raw_data_dir}")
         print(f"Umbral minimo: {self.MIN_REGISTROS} registros por estacion\n")
 
         start_time = time.time()
 
         # Obtener todos los archivos CSV
-        csv_files = list(self.input_data_dir.glob("*.csv"))
+        csv_files = list(self.raw_data_dir.glob("*.csv"))
         total_archivos = len(csv_files)
 
         print(f"Total de archivos a procesar: {total_archivos}\n")
@@ -323,9 +313,8 @@ class StationFilter:
             "metadata": {
                 "timestamp": datetime.now().isoformat(),
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-                "etapa": "filtered_stations",
-                "carpeta_origen": str(self.input_data_dir),
-                "carpeta_destino": str(self.output_data_dir),
+                "etapa": "filter_stations",
+                "carpeta_raw": str(self.raw_data_dir),
                 "umbral_minimo_registros": self.MIN_REGISTROS
             },
             "resumen": {
@@ -351,7 +340,7 @@ class StationFilter:
             "archivos_fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.output_reporte_dir / "reporte_filtrado_estaciones.json"
+        reporte_path = self.reporte_dir / "paso4_filter_stations.json"
         with open(reporte_path, 'w', encoding='utf-8') as f:
             json.dump(reporte, f, indent=2, ensure_ascii=False)
 
@@ -364,7 +353,7 @@ def main():
     print("""
 =================================================
    FILTRADO DE ESTACIONES - PIPELINE
-     Etapa 4: Filter Stations
+     Paso 4: Filter Stations
 =================================================
     """)
 
@@ -374,8 +363,8 @@ def main():
         filterer.generar_reporte(tiempo_total)
 
         print("\n[OK] Filtrado de estaciones completado!")
-        print(f"Archivos procesados: {filterer.output_data_dir}")
-        print(f"Reporte: {filterer.output_reporte_dir}")
+        print(f"Archivos procesados in-place en: {filterer.raw_data_dir}")
+        print(f"Reporte: {filterer.reporte_dir}")
 
     except Exception as e:
         print(f"\n[ERROR] Error fatal: {e}")

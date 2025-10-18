@@ -20,11 +20,11 @@ class INEScraperConcurrent:
         self.catalog_path = Config.CATALOG_PATH
 
         # Crear estructura de carpetas con fecha actual
-        # Estructura: outputs/DD-MM-YYYY/raw/data y outputs/DD-MM-YYYY/raw/reporte
+        # Nueva estructura: outputs/DD-MM-YYYY/raw/ y outputs/DD-MM-YYYY/reportes/
         fecha_hoy = datetime.now().strftime("%d-%m-%Y")
-        self.base_output_dir = Path(Config.OUTPUT_DIR) / fecha_hoy / "raw"
-        self.data_dir = self.base_output_dir / "data"
-        self.reporte_dir = self.base_output_dir / "reporte"
+        self.fecha_folder = Path(Config.OUTPUT_DIR) / fecha_hoy
+        self.data_dir = self.fecha_folder / "raw"
+        self.reporte_dir = self.fecha_folder / "reportes"
 
         # Crear directorios solo si se guardan archivos localmente
         if Config.SAVE_LOCAL_FILES:
@@ -321,7 +321,7 @@ class INEScraperConcurrent:
         # Estimación de tiempo (aprox. 12 segundos por dataset / número de workers)
         tiempo_estimado = (total_datasets * 12) / num_workers / 60
         print(f"⏱️  Estimado: {tiempo_estimado:.1f} minutos con {num_workers} navegadores")
-        print(f"📁 Carpeta de salida: {self.base_output_dir}\n")
+        print(f"📁 Carpeta de salida: {self.data_dir}\n")
 
         start_time = time.time()
 
@@ -513,7 +513,7 @@ class INEScraperConcurrent:
         }
 
         if Config.SAVE_LOCAL_FILES:
-            reporte_path = self.reporte_dir / "reporte_descarga.json"
+            reporte_path = self.reporte_dir / "paso1_scraper.json"
             with open(reporte_path, 'w', encoding='utf-8') as f:
                 json.dump(reporte, f, indent=2, ensure_ascii=False)
             print(f"📄 Reporte JSON guardado: {reporte_path}\n")
@@ -549,8 +549,8 @@ async def main():
     print("✅ Proceso completado!")
     if Config.SAVE_LOCAL_FILES:
         fecha_hoy = datetime.now().strftime("%d-%m-%Y")
-        print(f"📁 Archivos CSV: outputs/{fecha_hoy}/raw/data/")
-        print(f"📄 Reporte JSON: outputs/{fecha_hoy}/raw/reporte/")
+        print(f"📁 Archivos CSV: outputs/{fecha_hoy}/raw/")
+        print(f"📄 Reporte JSON: outputs/{fecha_hoy}/reportes/")
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 """
 Standardize Names - Estandarización de Nombres de Archivos
-Transforma los archivos CSV raw con nombres originales a nombres estandarizados
+Renombra los archivos CSV en la carpeta raw con nombres estandarizados
+(Procesamiento in-place, sin crear carpeta intermedia)
 """
 
 import json
-import shutil
 import time
 from pathlib import Path
 from datetime import datetime
@@ -25,15 +25,11 @@ class NameStandardizer:
             raise Exception("No se encontraron carpetas de salida para procesar")
 
         self.fecha_folder = fecha_folders[0]  # La más reciente
-        self.raw_data_dir = self.fecha_folder / "raw" / "data"
-        self.raw_reporte_dir = self.fecha_folder / "raw" / "reporte"
+        self.raw_data_dir = self.fecha_folder / "raw"
+        self.reporte_dir = self.fecha_folder / "reportes"
 
-        self.standardized_data_dir = self.fecha_folder / "standardized" / "data"
-        self.standardized_reporte_dir = self.fecha_folder / "standardized" / "reporte"
-
-        # Crear directorios de salida
-        self.standardized_data_dir.mkdir(parents=True, exist_ok=True)
-        self.standardized_reporte_dir.mkdir(parents=True, exist_ok=True)
+        # Crear directorio de reportes si no existe
+        self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
         self.mapping = {}
         self.resultados = {
@@ -55,10 +51,10 @@ class NameStandardizer:
     def obtener_dataset_id_desde_archivo(self, filename: str) -> str:
         """
         Obtiene el dataset ID del archivo original basándose en el nombre
-        Lee el reporte raw para obtener el mapping correcto
+        Lee el reporte del paso 1 para obtener el mapping correcto
         """
-        # Leer reporte raw para obtener el mapping de archivo a dataset_id
-        reporte_path = self.raw_reporte_dir / "reporte_descarga.json"
+        # Leer reporte del paso 1
+        reporte_path = self.reporte_dir / "paso1_scraper.json"
 
         if not reporte_path.exists():
             return None
@@ -74,10 +70,9 @@ class NameStandardizer:
         return None
 
     def estandarizar_archivos(self):
-        """Estandariza los nombres de todos los archivos CSV"""
-        print("🔄 Iniciando estandarización de nombres...")
-        print(f"📁 Carpeta raw: {self.raw_data_dir}")
-        print(f"📁 Carpeta standardized: {self.standardized_data_dir}\n")
+        """Renombra los archivos CSV en la carpeta raw con nombres estandarizados"""
+        print("🔄 Iniciando estandarización de nombres (in-place)...")
+        print(f"📁 Carpeta raw: {self.raw_data_dir}\n")
 
         start_time = time.time()
 
@@ -118,12 +113,12 @@ class NameStandardizer:
                 nombre_estandarizado = mapeo['nombre_estandarizado']
                 nuevo_filename = f"{nombre_estandarizado}.csv"
 
-                # Copiar archivo con nuevo nombre
-                destino_path = self.standardized_data_dir / nuevo_filename
-                shutil.copy2(archivo_path, destino_path)
+                # Renombrar archivo in-place
+                nuevo_path = self.raw_data_dir / nuevo_filename
+                archivo_path.rename(nuevo_path)
 
                 print(f"[{idx}/{total_archivos}] ✓ {mapeo['nombre_original'][:50]}...")
-                print(f"      └─ {filename} → {nuevo_filename}")
+                print(f"      └─ Renombrado: {nuevo_filename}")
 
                 self.resultados['exitosos'].append({
                     "dataset_id": dataset_id,
@@ -132,7 +127,7 @@ class NameStandardizer:
                     "nombre_estandarizado": nombre_estandarizado,
                     "archivo_nuevo": nuevo_filename,
                     "categoria": mapeo['categoria'],
-                    "size": archivo_path.stat().st_size
+                    "size": nuevo_path.stat().st_size
                 })
 
             except Exception as e:
@@ -187,9 +182,8 @@ class NameStandardizer:
             "metadata": {
                 "timestamp": datetime.now().isoformat(),
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-                "etapa": "standardized",
-                "carpeta_origen": str(self.raw_data_dir),
-                "carpeta_destino": str(self.standardized_data_dir)
+                "etapa": "standardize_names",
+                "carpeta_raw": str(self.raw_data_dir)
             },
             "resumen": {
                 "total_archivos": total,
@@ -207,7 +201,7 @@ class NameStandardizer:
             "archivos_fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.standardized_reporte_dir / "reporte_estandarizacion.json"
+        reporte_path = self.reporte_dir / "paso2_standardize.json"
         with open(reporte_path, 'w', encoding='utf-8') as f:
             json.dump(reporte, f, indent=2, ensure_ascii=False)
 
@@ -220,7 +214,7 @@ def main():
     print("""
 ╔══════════════════════════════════════════════╗
 ║   ESTANDARIZACIÓN DE NOMBRES - PIPELINE      ║
-║          Etapa 2: Standardized               ║
+║          Paso 2: Standardize Names           ║
 ╚══════════════════════════════════════════════╝
     """)
 
@@ -231,8 +225,8 @@ def main():
         standardizer.generar_reporte(tiempo_total)
 
         print("✅ Estandarización completada!")
-        print(f"📁 Archivos estandarizados: {standardizer.standardized_data_dir}")
-        print(f"📄 Reporte: {standardizer.standardized_reporte_dir}")
+        print(f"📁 Archivos renombrados en: {standardizer.raw_data_dir}")
+        print(f"📄 Reporte: {standardizer.reporte_dir}")
 
     except Exception as e:
         print(f"\n❌ Error fatal: {e}")

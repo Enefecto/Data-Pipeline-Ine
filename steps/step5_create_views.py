@@ -30,21 +30,16 @@ class ViewCreator:
 
         self.fecha_folder = fecha_folders[0]  # La más reciente
 
-        # Input: datos filtrados del paso 4
-        if (self.fecha_folder / "filtered_stations" / "data").exists():
-            self.input_data_dir = self.fecha_folder / "filtered_stations" / "data"
-        elif (self.fecha_folder / "columns_removed" / "data").exists():
-            self.input_data_dir = self.fecha_folder / "columns_removed" / "data"
-        else:
-            self.input_data_dir = self.fecha_folder / "standardized" / "data"
+        # Input: datos procesados de raw (ya estandarizados, sin columnas flags, y filtrados)
+        self.input_data_dir = self.fecha_folder / "raw"
 
         # Output: vistas consolidadas
-        self.output_data_dir = self.fecha_folder / "views" / "data"
-        self.output_reporte_dir = self.fecha_folder / "views" / "reporte"
+        self.output_data_dir = self.fecha_folder / "views"
+        self.reporte_dir = self.fecha_folder / "reportes"
 
         # Crear directorios de salida
         self.output_data_dir.mkdir(parents=True, exist_ok=True)
-        self.output_reporte_dir.mkdir(parents=True, exist_ok=True)
+        self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
         # Cargar mapeo de columnas de estaciones
         mapping_path = Path(__file__).parent.parent / "dictionary" / "station_columns_mapping.json"
@@ -781,7 +776,7 @@ class ViewCreator:
             "fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.output_reporte_dir / "reporte_vistas.json"
+        reporte_path = self.reporte_dir / "paso5_create_views.json"
         with open(reporte_path, 'w', encoding='utf-8') as f:
             json.dump(reporte, f, indent=2, ensure_ascii=False)
 
@@ -805,7 +800,7 @@ def main():
 
         print("\n[OK] Generacion de vistas completada!")
         print(f"Archivos generados: {creator.output_data_dir}")
-        print(f"Reporte: {creator.output_reporte_dir}")
+        print(f"Reporte: {creator.reporte_dir}")
 
     except Exception as e:
         print(f"\n[ERROR] Error fatal: {e}")

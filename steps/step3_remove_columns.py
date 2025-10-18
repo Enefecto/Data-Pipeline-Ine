@@ -1,7 +1,7 @@
 """
 Remove Columns - Eliminación de Columnas No Deseadas
 Elimina las columnas 'Flag Codes' y 'Flags' de todos los archivos CSV
-Etapa 3 del pipeline
+(Procesamiento in-place en carpeta raw)
 """
 
 import json
@@ -28,21 +28,11 @@ class ColumnRemover:
             raise Exception("No se encontraron carpetas de salida para procesar")
 
         self.fecha_folder = fecha_folders[0]  # La más reciente
+        self.raw_data_dir = self.fecha_folder / "raw"
+        self.reporte_dir = self.fecha_folder / "reportes"
 
-        # Buscar la carpeta más reciente con datos procesados
-        if (self.fecha_folder / "standardized" / "data").exists():
-            self.input_data_dir = self.fecha_folder / "standardized" / "data"
-        elif (self.fecha_folder / "cleaned" / "data").exists():
-            self.input_data_dir = self.fecha_folder / "cleaned" / "data"
-        else:
-            self.input_data_dir = self.fecha_folder / "raw" / "data"
-
-        self.output_data_dir = self.fecha_folder / "columns_removed" / "data"
-        self.output_reporte_dir = self.fecha_folder / "columns_removed" / "reporte"
-
-        # Crear directorios de salida
-        self.output_data_dir.mkdir(parents=True, exist_ok=True)
-        self.output_reporte_dir.mkdir(parents=True, exist_ok=True)
+        # Crear directorio de reportes si no existe
+        self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
         self.resultados = {
             "exitosos": [],
@@ -52,7 +42,7 @@ class ColumnRemover:
 
     def eliminar_columnas_archivo(self, archivo_path: Path) -> Dict:
         """
-        Elimina las columnas flag_codes y flags de un archivo CSV
+        Elimina las columnas flag_codes y flags de un archivo CSV (in-place)
 
         Returns:
             Dict con información del procesamiento
@@ -60,6 +50,8 @@ class ColumnRemover:
         filename = archivo_path.name
 
         try:
+            size_original = archivo_path.stat().st_size
+
             # Leer CSV
             df = pd.read_csv(archivo_path)
 
@@ -74,9 +66,9 @@ class ColumnRemover:
 
             columnas_finales = df.columns.tolist()
 
-            # Guardar archivo procesado
-            output_path = self.output_data_dir / filename
-            df.to_csv(output_path, index=False)
+            # Sobrescribir archivo in-place
+            df.to_csv(archivo_path, index=False)
+            size_final = archivo_path.stat().st_size
 
             return {
                 "status": "success",
@@ -87,8 +79,8 @@ class ColumnRemover:
                 "num_filas": len(df),
                 "num_columnas_original": len(columnas_originales),
                 "num_columnas_final": len(columnas_finales),
-                "size_original": archivo_path.stat().st_size,
-                "size_final": output_path.stat().st_size
+                "size_original": size_original,
+                "size_final": size_final
             }
 
         except Exception as e:
@@ -99,16 +91,15 @@ class ColumnRemover:
             }
 
     def procesar_archivos(self):
-        """Procesa todos los archivos CSV eliminando las columnas especificadas"""
-        print("🔄 Iniciando eliminación de columnas...")
-        print(f"📁 Carpeta entrada: {self.input_data_dir}")
-        print(f"📁 Carpeta salida: {self.output_data_dir}")
+        """Procesa todos los archivos CSV eliminando las columnas especificadas (in-place)"""
+        print("🔄 Iniciando eliminación de columnas (in-place)...")
+        print(f"📁 Carpeta raw: {self.raw_data_dir}")
         print(f"🗑️  Columnas a eliminar: {', '.join(set([c for c in self.columns_to_remove]))}\n")
 
         start_time = time.time()
 
         # Obtener todos los archivos CSV
-        csv_files = list(self.input_data_dir.glob("*.csv"))
+        csv_files = list(self.raw_data_dir.glob("*.csv"))
         total_archivos = len(csv_files)
 
         print(f"📊 Total de archivos a procesar: {total_archivos}\n")
@@ -188,9 +179,8 @@ class ColumnRemover:
             "metadata": {
                 "timestamp": datetime.now().isoformat(),
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-                "etapa": "columns_removed",
-                "carpeta_origen": str(self.input_data_dir),
-                "carpeta_destino": str(self.output_data_dir),
+                "etapa": "remove_columns",
+                "carpeta_raw": str(self.raw_data_dir),
                 "columnas_objetivo": list(set(self.columns_to_remove))
             },
             "resumen": {
@@ -216,7 +206,7 @@ class ColumnRemover:
             "archivos_fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.output_reporte_dir / "reporte_eliminacion_columnas.json"
+        reporte_path = self.reporte_dir / "paso3_remove_columns.json"
         with open(reporte_path, 'w', encoding='utf-8') as f:
             json.dump(reporte, f, indent=2, ensure_ascii=False)
 
@@ -229,7 +219,7 @@ def main():
     print("""
 ╔══════════════════════════════════════════════╗
 ║   ELIMINACIÓN DE COLUMNAS - PIPELINE         ║
-║        Etapa 3: Remove Columns               ║
+║        Paso 3: Remove Columns                ║
 ╚══════════════════════════════════════════════╝
     """)
 
@@ -239,8 +229,8 @@ def main():
         remover.generar_reporte(tiempo_total)
 
         print("✅ Eliminación de columnas completada!")
-        print(f"📁 Archivos procesados: {remover.output_data_dir}")
-        print(f"📄 Reporte: {remover.output_reporte_dir}")
+        print(f"📁 Archivos procesados in-place en: {remover.raw_data_dir}")
+        print(f"📄 Reporte: {remover.reporte_dir}")
 
     except Exception as e:
         print(f"\n❌ Error fatal: {e}")
