@@ -23,6 +23,7 @@ from steps.step3_remove_columns import ColumnRemover
 from steps.step4_filter_stations import StationFilter
 from steps.step5_create_views import ViewCreator
 from steps.step6_upload_to_db import DatabaseUploader
+from steps.step7_generate_report import ReportGenerator
 
 
 class PipelineOrchestrator:
@@ -68,7 +69,7 @@ class PipelineOrchestrator:
             print("\n" + "="*80 + "\n")
 
     async def ejecutar_pipeline_completo(self):
-        """Ejecuta los 6 pasos del pipeline en secuencia"""
+        """Ejecuta los 7 pasos del pipeline en secuencia"""
         print("""
 ╔═══════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
@@ -80,6 +81,7 @@ class PipelineOrchestrator:
 ║  Paso 4: Filtrado de estaciones con datos insuficientes          ║
 ║  Paso 5: Creación de vistas consolidadas                         ║
 ║  Paso 6: Carga a base de datos (Neon PostgreSQL)                 ║
+║  Paso 7: Generación de reporte consolidado                       ║
 ║                                                                    ║
 ╚═══════════════════════════════════════════════════════════════════╝
         """)
@@ -278,110 +280,37 @@ class PipelineOrchestrator:
                 })
                 # No hacemos raise aquí porque queremos generar el reporte final
 
-        finally:
-            # SIEMPRE generar reporte consolidado, sin importar si hubo errores
-            print("\n" + "="*80)
-            print("GENERANDO REPORTE CONSOLIDADO DEL PIPELINE")
-            print("="*80 + "\n")
-            self.generar_reporte_consolidado()
+            # PASO 7: Generación de reporte consolidado
+            try:
+                print("\n" + "="*80)
+                print("PASO 7: GENERACION DE REPORTE CONSOLIDADO")
+                print("="*80 + "\n")
 
-    def generar_reporte_consolidado(self):
-        """Genera un reporte consolidado de todo el pipeline"""
-        try:
-            tiempo_total = time.time() - self.inicio_pipeline
+                inicio = time.time()
+                generator = ReportGenerator()
+                tiempo_total = time.time() - inicio
+                generator.generar_reporte(tiempo_total)
 
-            # Buscar la carpeta de fecha más reciente
-            fecha_folders = sorted([f for f in self.output_base.iterdir() if f.is_dir()], reverse=True)
-            if not fecha_folders:
-                print("[WARN] No se encontro carpeta de salida para generar reporte consolidado")
-                return
+                elapsed = time.time() - inicio
+                self.pasos_completados.append({
+                    "paso": 7,
+                    "nombre": "Generate Report",
+                    "duracion_segundos": elapsed,
+                    "exitoso": True
+                })
 
-            fecha_folder = fecha_folders[0]
-            reporte_dir = fecha_folder / "reportes"
-
-            if not reporte_dir.exists():
-                print(f"[WARN] No se encontro carpeta de reportes: {reporte_dir}")
-                return
-
-            # Leer reportes individuales de cada paso
-            reportes_individuales = {}
-            for paso_num in range(1, 7):
-                reporte_files = {
-                    1: "paso1_scraper.json",
-                    2: "paso2_standardize.json",
-                    3: "paso3_remove_columns.json",
-                    4: "paso4_filter_stations.json",
-                    5: "paso5_create_views.json",
-                    6: "paso6_upload_to_db.json"
-                }
-
-                reporte_path = reporte_dir / reporte_files[paso_num]
-                if reporte_path.exists():
-                    with open(reporte_path, 'r', encoding='utf-8') as f:
-                        reportes_individuales[f"paso_{paso_num}"] = json.load(f)
-
-            # Crear reporte consolidado
-            reporte_consolidado = {
-                "metadata": {
-                    "timestamp": datetime.now().isoformat(),
-                    "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-                    "pipeline": "Pipeline Completo INE - Observatorio Ambiental",
-                    "version": "2.0",
-                    "fecha_ejecucion": fecha_folder.name
-                },
-                "resumen_pipeline": {
-                    "pasos_totales": 6,
-                    "pasos_completados": len(self.pasos_completados),
-                    "pasos_fallidos": len(self.pasos_fallidos),
-                    "tiempo_total_segundos": round(tiempo_total, 2),
-                    "tiempo_total_minutos": round(tiempo_total / 60, 2),
-                    "tiempo_total_horas": round(tiempo_total / 3600, 2)
-                },
-                "pasos_ejecutados": self.pasos_completados,
-                "pasos_fallidos": self.pasos_fallidos,
-                "reportes_individuales": reportes_individuales,
-                "estructura_final": {
-                    "raw": "Datos raw procesados (estandarizados, sin flags, filtrados)",
-                    "views": "Vistas consolidadas generadas",
-                    "reportes": "Reportes JSON de cada paso + reporte consolidado"
-                }
-            }
-
-            # Guardar reporte consolidado
-            reporte_path = reporte_dir / "pipeline_completo.json"
-            with open(reporte_path, 'w', encoding='utf-8') as f:
-                json.dump(reporte_consolidado, f, indent=2, ensure_ascii=False)
-
-            # Imprimir resumen en consola
-            print("\n" + "="*80)
-            print("REPORTE CONSOLIDADO DEL PIPELINE".center(80))
-            print("="*80)
-            print(f"\nRESUMEN GENERAL:")
-            print(f"   Fecha de ejecucion:       {fecha_folder.name}")
-            print(f"   Pasos completados:        {len(self.pasos_completados)}/6")
-            print(f"   Pasos fallidos:           {len(self.pasos_fallidos)}")
-            print(f"   Tiempo total:             {tiempo_total/60:.1f} minutos ({tiempo_total:.1f}s)")
-
-            print(f"\nDESGLOSE DE TIEMPOS:")
-            for paso in self.pasos_completados:
-                print(f"   Paso {paso['paso']} ({paso['nombre']}): {paso['duracion_segundos']:.1f}s")
-
-            if self.pasos_fallidos:
-                print(f"\nPASOS FALLIDOS:")
-                for paso in self.pasos_fallidos:
-                    print(f"   Paso {paso['paso']} ({paso['nombre']}): {paso['error'][:80]}")
-
-            print(f"\nESTRUCTURA FINAL:")
-            print(f"   {fecha_folder}/")
-            print(f"   |-- raw/              (Datos procesados)")
-            print(f"   |-- views/            (Vistas consolidadas)")
-            print(f"   `-- reportes/         (Reportes JSON)")
-
-            print(f"\nReporte consolidado guardado: {reporte_path}")
-            print("="*80 + "\n")
+            except Exception as e:
+                print(f"\n[ERROR] ERROR EN PASO 7: {e}")
+                self.pasos_fallidos.append({
+                    "paso": 7,
+                    "nombre": "Generate Report",
+                    "error": str(e)
+                })
+                # No hacemos raise para permitir que el pipeline termine
 
         except Exception as e:
-            print(f"[ERROR] Error al generar reporte consolidado: {e}")
+            # Capturar cualquier excepción general que no fue manejada
+            print(f"\n[ERROR] ERROR NO MANEJADO EN PIPELINE: {e}")
             import traceback
             traceback.print_exc()
 

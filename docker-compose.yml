@@ -1,21 +1,21 @@
 services:
-  # PASO 1: Scraper - Descarga datos raw del INE
-  scraper:
+  # PIPELINE ORCHESTRATOR - Ejecuta los 7 pasos del pipeline completo
+  pipeline-orchestrator:
     build: .
-    container_name: ine-scraper
-    command: python steps/step1_scraper.py
+    container_name: ine-pipeline-orchestrator
+    command: python pipeline_orchestrator.py
     volumes:
       - ./outputs:/app/outputs
       - ./dictionary:/app/dictionary
       - ./steps:/app/steps
+      - ./utils:/app/utils
       - ./config.py:/app/config.py
+      - ./pipeline_orchestrator.py:/app/pipeline_orchestrator.py
       - ./.env:/app/.env
     env_file:
       - .env
     environment:
       - PYTHONUNBUFFERED=1
-      # Pipeline
-      - PIPELINE_STAGE=raw
       # Configuración de concurrencia
       - MAX_CONCURRENT_BROWSERS=4
       - DOWNLOAD_TIMEOUT=60
@@ -28,108 +28,3 @@ services:
       - HEADLESS=true
       # Configuración de ejecución
       # - MAX_DATASETS=5  # Descomentar para testing
-      # Base de datos (para futuro uso)
-      # - DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
-
-  # PASO 2: Standardizer - Estandariza nombres de archivos
-  standardizer:
-    build: .
-    container_name: ine-standardizer
-    command: python steps/step2_standardize_names.py
-    volumes:
-      - ./outputs:/app/outputs
-      - ./dictionary:/app/dictionary
-      - ./steps:/app/steps
-      - ./config.py:/app/config.py
-      - ./.env:/app/.env
-    env_file:
-      - .env
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PIPELINE_STAGE=standardized
-      - OUTPUT_DIR=/app/outputs
-    depends_on:
-      scraper:
-        condition: service_completed_successfully
-
-  # PASO 3: Column Remover - Elimina columnas flag_codes y flags
-  column_remover:
-    build: .
-    container_name: ine-column-remover
-    command: python steps/step3_remove_columns.py
-    volumes:
-      - ./outputs:/app/outputs
-      - ./steps:/app/steps
-      - ./config.py:/app/config.py
-      - ./.env:/app/.env
-    env_file:
-      - .env
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PIPELINE_STAGE=columns_removed
-      - OUTPUT_DIR=/app/outputs
-    depends_on:
-      standardizer:
-        condition: service_completed_successfully
-
-  # PASO 4: Station Filter - Filtra estaciones con datos insuficientes (≤2 registros)
-  station_filter:
-    build: .
-    container_name: ine-station-filter
-    command: python steps/step4_filter_stations.py
-    volumes:
-      - ./outputs:/app/outputs
-      - ./dictionary:/app/dictionary
-      - ./steps:/app/steps
-      - ./config.py:/app/config.py
-      - ./.env:/app/.env
-    env_file:
-      - .env
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PIPELINE_STAGE=filtered_stations
-      - OUTPUT_DIR=/app/outputs
-    depends_on:
-      column_remover:
-        condition: service_completed_successfully
-
-  # PASO 5: View Creator - Genera vistas consolidadas en CSV
-  view_creator:
-    build: .
-    container_name: ine-view-creator
-    command: python steps/step5_create_views.py
-    volumes:
-      - ./outputs:/app/outputs
-      - ./dictionary:/app/dictionary
-      - ./steps:/app/steps
-      - ./config.py:/app/config.py
-      - ./.env:/app/.env
-    env_file:
-      - .env
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PIPELINE_STAGE=views
-      - OUTPUT_DIR=/app/outputs
-    depends_on:
-      station_filter:
-        condition: service_completed_successfully
-
-  # PASO 6: Database Uploader - Carga vistas a PostgreSQL (Neon)
-  db_uploader:
-    build: .
-    container_name: ine-db-uploader
-    command: python steps/step6_upload_to_db.py
-    volumes:
-      - ./outputs:/app/outputs
-      - ./steps:/app/steps
-      - ./config.py:/app/config.py
-      - ./.env:/app/.env
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PIPELINE_STAGE=uploaded_to_db
-      - OUTPUT_DIR=/app/outputs
-    env_file:
-      - .env
-    depends_on:
-      view_creator:
-        condition: service_completed_successfully
