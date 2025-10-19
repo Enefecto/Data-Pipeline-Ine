@@ -7,6 +7,7 @@ Elimina estaciones con 2 o menos registros de cada archivo CSV
 import json
 import time
 import sys
+import io
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
@@ -16,24 +17,13 @@ from typing import List, Dict, Tuple
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config import Config
+from utils.storage_factory import StorageFactory
 
 
 class StationFilter:
     def __init__(self):
-        self.output_base = Path(Config.OUTPUT_DIR)
-
-        # Buscar la carpeta de fecha más reciente
-        fecha_folders = sorted([f for f in self.output_base.iterdir() if f.is_dir()], reverse=True)
-
-        if not fecha_folders:
-            raise Exception("No se encontraron carpetas de salida para procesar")
-
-        self.fecha_folder = fecha_folders[0]  # La más reciente
-        self.raw_data_dir = self.fecha_folder / "raw"
-        self.reporte_dir = self.fecha_folder / "reportes"
-
-        # Crear directorio de reportes si no existe
-        self.reporte_dir.mkdir(parents=True, exist_ok=True)
+        self.storage = StorageFactory.get_storage()
+        self.fecha_hoy = datetime.now().strftime("%d-%m-%Y")
 
         # Cargar mapeo de columnas de estaciones
         mapping_path = Path(__file__).parent.parent / "dictionary" / "station_columns_mapping.json"
@@ -75,21 +65,24 @@ class StationFilter:
 
         raise ValueError(f"No se pudo detectar columna de estación para {filename}")
 
-    def filtrar_estaciones_archivo(self, archivo_path: Path) -> Dict:
+    def filtrar_estaciones_archivo(self, filename: str, subfolder: str) -> Dict:
         """
         Filtra estaciones con datos insuficientes de un archivo CSV
 
         Args:
-            archivo_path: Ruta al archivo CSV
+            filename: Nombre del archivo CSV
+            subfolder: Subfolder donde está el archivo
 
         Returns:
             Dict con información del procesamiento
         """
-        filename = archivo_path.name
-
         try:
-            # Leer CSV
-            df = pd.read_csv(archivo_path)
+            # Cargar archivo desde storage
+            file_data = self.storage.load_file(filename, subfolder)
+            size_original = len(file_data)
+
+            # Leer CSV desde bytes
+            df = pd.read_csv(io.BytesIO(file_data))
 
             if len(df) == 0:
                 return {
@@ -176,10 +169,13 @@ class StationFilter:
                     "registros_null_eliminados": registros_null_eliminados
                 }
 
-            # Guardar archivo procesado in-place
-            size_original = archivo_path.stat().st_size
-            df_filtrado.to_csv(archivo_path, index=False)
-            size_final = archivo_path.stat().st_size
+            # Guardar archivo procesado in-place usando storage
+            csv_buffer = io.StringIO()
+            df_filtrado.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode('utf-8')
+            size_final = len(csv_bytes)
+
+            self.storage.save_file(csv_bytes, filename, subfolder)
 
             resultado["size_original"] = size_original
             resultado["size_final"] = size_final
@@ -198,20 +194,21 @@ class StationFilter:
     def procesar_archivos(self):
         """Procesa todos los archivos CSV filtrando estaciones con datos insuficientes (in-place)"""
         print("Iniciando filtrado de estaciones (in-place)...")
-        print(f"Carpeta raw: {self.raw_data_dir}")
         print(f"Umbral minimo: {self.MIN_REGISTROS} registros por estacion\n")
 
         start_time = time.time()
 
-        # Obtener todos los archivos CSV
-        csv_files = list(self.raw_data_dir.glob("*.csv"))
+        # Obtener todos los archivos CSV usando storage
+        subfolder = f"{self.fecha_hoy}/raw"
+        csv_files = self.storage.list_files(subfolder, "*.csv")
         total_archivos = len(csv_files)
 
         print(f"Total de archivos a procesar: {total_archivos}\n")
         print("=" * 80)
 
-        for idx, archivo_path in enumerate(csv_files, 1):
-            resultado = self.filtrar_estaciones_archivo(archivo_path)
+        for idx, filepath in enumerate(csv_files, 1):
+            filename = Path(filepath).name
+            resultado = self.filtrar_estaciones_archivo(filename, subfolder)
 
             if resultado["status"] == "success":
                 print(f"[{idx}/{total_archivos}] [OK] {resultado['filename']}")
@@ -314,7 +311,8 @@ class StationFilter:
                 "timestamp": datetime.now().isoformat(),
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                 "etapa": "filter_stations",
-                "carpeta_raw": str(self.raw_data_dir),
+                "carpeta_raw": f"{self.fecha_hoy}/raw",
+                "storage_mode": Config.STORAGE_MODE,
                 "umbral_minimo_registros": self.MIN_REGISTROS
             },
             "resumen": {
@@ -340,11 +338,9 @@ class StationFilter:
             "archivos_fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.reporte_dir / "paso4_filter_stations.json"
-        with open(reporte_path, 'w', encoding='utf-8') as f:
-            json.dump(reporte, f, indent=2, ensure_ascii=False)
-
-        print(f"Reporte JSON guardado: {reporte_path}\n")
+        # Guardar reporte usando StorageFactory
+        self.storage.save_json(reporte, "paso4_filter_stations.json", f"{self.fecha_hoy}/reportes")
+        print(f"[OK] Reporte JSON guardado: {self.fecha_hoy}/reportes/paso4_filter_stations.json\n")
 
         return reporte
 
@@ -363,8 +359,8 @@ def main():
         filterer.generar_reporte(tiempo_total)
 
         print("\n[OK] Filtrado de estaciones completado!")
-        print(f"Archivos procesados in-place en: {filterer.raw_data_dir}")
-        print(f"Reporte: {filterer.reporte_dir}")
+        print(f"Archivos procesados in-place en: {filterer.fecha_hoy}/raw")
+        print(f"Reporte: {filterer.fecha_hoy}/reportes/paso4_filter_stations.json")
 
     except Exception as e:
         print(f"\n[ERROR] Error fatal: {e}")

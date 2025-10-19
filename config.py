@@ -82,6 +82,19 @@ class Config:
     # Número de reintentos por dataset fallido
     MAX_RETRIES = int(os.getenv('MAX_RETRIES', '2'))
 
+    # ===== CONFIGURACIÓN DE ENTORNO =====
+    # Modo de producción: false = local, true = S3
+    PRODUCTION = os.getenv('PRODUCTION', 'false').lower() == 'true'
+
+    # ===== CONFIGURACIÓN DE AWS S3 =====
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
+    AWS_REGION = os.getenv('AWS_REGION', 'sa-east-1')
+    S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME', '')
+
+    # Determinar modo de almacenamiento
+    STORAGE_MODE = 'S3' if PRODUCTION else 'LOCAL'
+
     # ===== COSTOS ESTIMADOS AWS LAMBDA =====
     # Estas son estimaciones para planificación
     @staticmethod

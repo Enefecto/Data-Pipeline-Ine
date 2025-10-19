@@ -11,6 +11,7 @@ from datetime import datetime
 from typing import Dict, List
 
 from config import Config
+from utils.storage_factory import StorageFactory
 
 # Importar cada paso del pipeline
 import sys
@@ -30,6 +31,41 @@ class PipelineOrchestrator:
         self.inicio_pipeline = time.time()
         self.pasos_completados = []
         self.pasos_fallidos = []
+        self.storage = StorageFactory.get_storage()
+        self.fecha_hoy = datetime.now().strftime("%d-%m-%Y")
+
+    def limpiar_ejecucion_previa(self):
+        """
+        Elimina la ejecución previa del mismo día si existe.
+        Útil para desarrollo donde se ejecutan múltiples pipelines en el mismo día.
+        En producción solo se ejecuta una vez a la semana.
+        """
+        print("\n" + "="*80)
+        print("VERIFICACION DE EJECUCION PREVIA".center(80))
+        print("="*80)
+        print(f"\n🔍 Verificando si existe una ejecución previa para: {self.fecha_hoy}")
+        print("")
+
+        # Verificar si ya existe una ejecución para hoy
+        if self.storage.folder_exists(self.fecha_hoy):
+            print(f"\n⚠️  ATENCION: Ya existe una ejecución para la fecha: {self.fecha_hoy}")
+            print("   Esta ejecución será eliminada para comenzar desde cero...")
+            print("")
+
+            resultado = self.storage.delete_folder(self.fecha_hoy)
+
+            if resultado:
+                print(f"\n   ✅ Ejecución previa eliminada exitosamente")
+                print("   El pipeline comenzará con datos limpios")
+            else:
+                print(f"\n   ⚠️  No se pudo eliminar la ejecución previa")
+                print("   Esto puede causar conflictos. Verifica los permisos de la carpeta.")
+
+            print("\n" + "="*80 + "\n")
+        else:
+            print(f"\n✅ No hay ejecución previa para {self.fecha_hoy}")
+            print("   Comenzando pipeline limpio desde cero")
+            print("\n" + "="*80 + "\n")
 
     async def ejecutar_pipeline_completo(self):
         """Ejecuta los 6 pasos del pipeline en secuencia"""
@@ -47,6 +83,21 @@ class PipelineOrchestrator:
 ║                                                                    ║
 ╚═══════════════════════════════════════════════════════════════════╝
         """)
+
+        # Mostrar configuración de almacenamiento
+        print("\n" + "="*80)
+        print("CONFIGURACION DE ALMACENAMIENTO".center(80))
+        print("="*80)
+        print(f"Modo de almacenamiento:  {Config.STORAGE_MODE}")
+        if Config.PRODUCTION:
+            print(f"Bucket S3:               {Config.S3_BUCKET_NAME}")
+            print(f"Region AWS:              {Config.AWS_REGION}")
+        else:
+            print(f"Directorio local:        {Config.OUTPUT_DIR}")
+        print("="*80 + "\n")
+
+        # Limpiar ejecución previa del mismo día (útil para desarrollo)
+        self.limpiar_ejecucion_previa()
 
         # Usar try-finally para GARANTIZAR que el reporte consolidado se genere SIEMPRE
         try:
@@ -178,7 +229,7 @@ class PipelineOrchestrator:
 
                 inicio = time.time()
                 creator = ViewCreator()
-                tiempo_total = creator.generar_vistas()
+                tiempo_total = creator.procesar_vistas()
                 creator.generar_reporte(tiempo_total)
 
                 elapsed = time.time() - inicio

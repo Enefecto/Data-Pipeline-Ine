@@ -7,6 +7,8 @@ import asyncio
 import json
 import re
 import time
+import os
+import tempfile
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Optional
@@ -14,20 +16,27 @@ from playwright.async_api import async_playwright, Page, Browser, TimeoutError a
 
 from config import Config
 
+# Agregar imports para storage
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from utils.storage_factory import StorageFactory
+
 
 class INEScraperConcurrent:
     def __init__(self):
         self.catalog_path = Config.CATALOG_PATH
 
-        # Crear estructura de carpetas con fecha actual
-        # Nueva estructura: outputs/DD-MM-YYYY/raw/ y outputs/DD-MM-YYYY/reportes/
-        fecha_hoy = datetime.now().strftime("%d-%m-%Y")
-        self.fecha_folder = Path(Config.OUTPUT_DIR) / fecha_hoy
+        # Inicializar storage (Local o S3 según PRODUCTION)
+        self.storage = StorageFactory.get_storage()
+        self.fecha_hoy = datetime.now().strftime("%d-%m-%Y")
+
+        # Para compatibilidad con código legacy (usado en rutas locales temporales)
+        self.fecha_folder = Path(Config.OUTPUT_DIR) / self.fecha_hoy
         self.data_dir = self.fecha_folder / "raw"
         self.reporte_dir = self.fecha_folder / "reportes"
 
-        # Crear directorios solo si se guardan archivos localmente
-        if Config.SAVE_LOCAL_FILES:
+        # Crear directorios solo si es modo LOCAL
+        if not Config.PRODUCTION:
             self.data_dir.mkdir(parents=True, exist_ok=True)
             self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
@@ -200,17 +209,25 @@ class INEScraperConcurrent:
             nombre_archivo = self.limpiar_nombre_archivo(nombre)
             filename = f"{nombre_archivo}.csv"
 
-            file_size = 0
-            filepath_str = ""
+            # Descargar a archivo temporal primero (compatible con Playwright v1.40.0)
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp_file:
+                tmp_path = tmp_file.name
 
-            if Config.SAVE_LOCAL_FILES:
-                filepath = self.data_dir / filename
-                await download.save_as(filepath)
-                file_size = filepath.stat().st_size
-                filepath_str = str(filepath)
-            else:
-                download_bytes = await download.read_all_bytes()
-                file_size = len(download_bytes)
+            await download.save_as(tmp_path)
+
+            # Leer el archivo temporal como bytes
+            with open(tmp_path, 'rb') as f:
+                download_bytes = f.read()
+
+            file_size = len(download_bytes)
+
+            # Guardar usando StorageFactory (local o S3 según configuración)
+            subfolder = f"{self.fecha_hoy}/raw"
+            self.storage.save_file(download_bytes, filename, subfolder)
+            filepath_str = f"{subfolder}/{filename}"
+
+            # Eliminar archivo temporal
+            os.unlink(tmp_path)
 
             elapsed = time.time() - start_time
             size_kb = file_size / 1024
@@ -512,13 +529,47 @@ class INEScraperConcurrent:
             "datasets_fallidos": self.resultados['fallidos']
         }
 
-        if Config.SAVE_LOCAL_FILES:
-            reporte_path = self.reporte_dir / "paso1_scraper.json"
-            with open(reporte_path, 'w', encoding='utf-8') as f:
-                json.dump(reporte, f, indent=2, ensure_ascii=False)
-            print(f"📄 Reporte JSON guardado: {reporte_path}\n")
+        # Guardar reporte usando StorageFactory
+        self.storage.save_json(reporte, "paso1_scraper.json", f"{self.fecha_hoy}/reportes")
+        print(f"[OK] Reporte JSON guardado: {self.fecha_hoy}/reportes/paso1_scraper.json\n")
 
         return reporte
+
+
+def limpiar_ejecucion_previa_si_existe():
+    """
+    Limpia la ejecución previa del mismo día si existe.
+    Útil para desarrollo donde se ejecutan múltiples pipelines en el mismo día.
+    """
+    storage = StorageFactory.get_storage()
+    fecha_hoy = datetime.now().strftime("%d-%m-%Y")
+
+    print("\n" + "="*80)
+    print("VERIFICACION DE EJECUCION PREVIA".center(80))
+    print("="*80)
+    print(f"\n🔍 Verificando si existe una ejecución previa para: {fecha_hoy}")
+    print("")
+
+    # Verificar si ya existe una ejecución para hoy
+    if storage.folder_exists(fecha_hoy):
+        print(f"\n⚠️  ATENCION: Ya existe una ejecución para la fecha: {fecha_hoy}")
+        print("   Esta ejecución será eliminada para comenzar desde cero...")
+        print("")
+
+        resultado = storage.delete_folder(fecha_hoy)
+
+        if resultado:
+            print(f"\n   ✅ Ejecución previa eliminada exitosamente")
+            print("   El pipeline comenzará con datos limpios")
+        else:
+            print(f"\n   ⚠️  No se pudo eliminar la ejecución previa")
+            print("   Esto puede causar conflictos. Verifica los permisos.")
+
+        print("\n" + "="*80 + "\n")
+    else:
+        print(f"\n✅ No hay ejecución previa para {fecha_hoy}")
+        print("   Comenzando pipeline limpio desde cero")
+        print("\n" + "="*80 + "\n")
 
 
 async def main():
@@ -528,6 +579,9 @@ async def main():
 ║      Optimizado para AWS Lambda              ║
 ╚══════════════════════════════════════════════╝
     """)
+
+    # IMPORTANTE: Limpiar ejecución previa ANTES de inicializar el scraper
+    limpiar_ejecucion_previa_si_existe()
 
     scraper = INEScraperConcurrent()
     scraper.cargar_catalogo()

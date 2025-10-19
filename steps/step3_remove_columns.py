@@ -7,32 +7,22 @@ Elimina las columnas 'Flag Codes' y 'Flags' de todos los archivos CSV
 import json
 import time
 import pandas as pd
+import io
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict
 
 from config import Config
+from utils.storage_factory import StorageFactory
 
 
 class ColumnRemover:
     def __init__(self):
-        self.output_base = Path(Config.OUTPUT_DIR)
+        self.storage = StorageFactory.get_storage()
+        self.fecha_hoy = datetime.now().strftime("%d-%m-%Y")
 
         # Columnas a eliminar (varias variaciones posibles)
         self.columns_to_remove = ['Flag Codes', 'Flags', 'flag_codes', 'flags', 'FLAG CODES', 'FLAGS']
-
-        # Buscar la carpeta de fecha más reciente
-        fecha_folders = sorted([f for f in self.output_base.iterdir() if f.is_dir()], reverse=True)
-
-        if not fecha_folders:
-            raise Exception("No se encontraron carpetas de salida para procesar")
-
-        self.fecha_folder = fecha_folders[0]  # La más reciente
-        self.raw_data_dir = self.fecha_folder / "raw"
-        self.reporte_dir = self.fecha_folder / "reportes"
-
-        # Crear directorio de reportes si no existe
-        self.reporte_dir.mkdir(parents=True, exist_ok=True)
 
         self.resultados = {
             "exitosos": [],
@@ -40,20 +30,24 @@ class ColumnRemover:
             "sin_columnas": []
         }
 
-    def eliminar_columnas_archivo(self, archivo_path: Path) -> Dict:
+    def eliminar_columnas_archivo(self, filename: str, subfolder: str) -> Dict:
         """
         Elimina las columnas flag_codes y flags de un archivo CSV (in-place)
+
+        Args:
+            filename: Nombre del archivo CSV
+            subfolder: Subfolder donde está el archivo (ej: "18-10-2025/raw")
 
         Returns:
             Dict con información del procesamiento
         """
-        filename = archivo_path.name
-
         try:
-            size_original = archivo_path.stat().st_size
+            # Cargar archivo desde storage
+            file_data = self.storage.load_file(filename, subfolder)
+            size_original = len(file_data)
 
-            # Leer CSV
-            df = pd.read_csv(archivo_path)
+            # Leer CSV desde bytes
+            df = pd.read_csv(io.BytesIO(file_data))
 
             columnas_originales = df.columns.tolist()
             columnas_eliminadas = []
@@ -66,9 +60,14 @@ class ColumnRemover:
 
             columnas_finales = df.columns.tolist()
 
-            # Sobrescribir archivo in-place
-            df.to_csv(archivo_path, index=False)
-            size_final = archivo_path.stat().st_size
+            # Convertir DataFrame a CSV bytes
+            csv_buffer = io.StringIO()
+            df.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode('utf-8')
+            size_final = len(csv_bytes)
+
+            # Sobrescribir archivo in-place usando storage
+            self.storage.save_file(csv_bytes, filename, subfolder)
 
             return {
                 "status": "success",
@@ -93,20 +92,21 @@ class ColumnRemover:
     def procesar_archivos(self):
         """Procesa todos los archivos CSV eliminando las columnas especificadas (in-place)"""
         print("🔄 Iniciando eliminación de columnas (in-place)...")
-        print(f"📁 Carpeta raw: {self.raw_data_dir}")
         print(f"🗑️  Columnas a eliminar: {', '.join(set([c for c in self.columns_to_remove]))}\n")
 
         start_time = time.time()
 
-        # Obtener todos los archivos CSV
-        csv_files = list(self.raw_data_dir.glob("*.csv"))
+        # Obtener todos los archivos CSV usando storage
+        subfolder = f"{self.fecha_hoy}/raw"
+        csv_files = self.storage.list_files(subfolder, "*.csv")
         total_archivos = len(csv_files)
 
         print(f"📊 Total de archivos a procesar: {total_archivos}\n")
         print("=" * 80)
 
-        for idx, archivo_path in enumerate(csv_files, 1):
-            resultado = self.eliminar_columnas_archivo(archivo_path)
+        for idx, filepath in enumerate(csv_files, 1):
+            filename = Path(filepath).name
+            resultado = self.eliminar_columnas_archivo(filename, subfolder)
 
             if resultado["status"] == "success":
                 if len(resultado["columnas_eliminadas"]) > 0:
@@ -180,7 +180,8 @@ class ColumnRemover:
                 "timestamp": datetime.now().isoformat(),
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                 "etapa": "remove_columns",
-                "carpeta_raw": str(self.raw_data_dir),
+                "carpeta_raw": f"{self.fecha_hoy}/raw",
+                "storage_mode": Config.STORAGE_MODE,
                 "columnas_objetivo": list(set(self.columns_to_remove))
             },
             "resumen": {
@@ -206,11 +207,9 @@ class ColumnRemover:
             "archivos_fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.reporte_dir / "paso3_remove_columns.json"
-        with open(reporte_path, 'w', encoding='utf-8') as f:
-            json.dump(reporte, f, indent=2, ensure_ascii=False)
-
-        print(f"📄 Reporte JSON guardado: {reporte_path}\n")
+        # Guardar reporte usando StorageFactory
+        self.storage.save_json(reporte, "paso3_remove_columns.json", f"{self.fecha_hoy}/reportes")
+        print(f"[OK] Reporte JSON guardado: {self.fecha_hoy}/reportes/paso3_remove_columns.json\n")
 
         return reporte
 
@@ -229,8 +228,8 @@ def main():
         remover.generar_reporte(tiempo_total)
 
         print("✅ Eliminación de columnas completada!")
-        print(f"📁 Archivos procesados in-place en: {remover.raw_data_dir}")
-        print(f"📄 Reporte: {remover.reporte_dir}")
+        print(f"📁 Archivos procesados in-place en: {remover.fecha_hoy}/raw")
+        print(f"📄 Reporte: {remover.fecha_hoy}/reportes/paso3_remove_columns.json")
 
     except Exception as e:
         print(f"\n❌ Error fatal: {e}")

@@ -19,29 +19,22 @@ from sqlalchemy.pool import NullPool
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config import Config
+from utils.storage_factory import StorageFactory
+import io
+import tempfile
 
 
 class DatabaseUploader:
     def __init__(self):
-        self.output_base = Path(Config.OUTPUT_DIR)
+        # Inicializar storage (S3 o Local según configuración)
+        self.storage = StorageFactory.get_storage()
+        self.fecha_hoy = datetime.now().strftime("%d-%m-%Y")
 
-        # Buscar la carpeta de fecha más reciente
-        fecha_folders = sorted([f for f in self.output_base.iterdir() if f.is_dir()], reverse=True)
+        # Verificar que existan vistas en storage
+        if not self.storage.folder_exists(self.fecha_hoy):
+            raise Exception(f"No se encontró la carpeta de fecha: {self.fecha_hoy}")
 
-        if not fecha_folders:
-            raise Exception("No se encontraron carpetas de salida para procesar")
-
-        self.fecha_folder = fecha_folders[0]  # La más reciente
-
-        # Input: vistas del paso 5
-        self.input_data_dir = self.fecha_folder / "views"
-
-        if not self.input_data_dir.exists():
-            raise Exception(f"No se encontró la carpeta de vistas: {self.input_data_dir}")
-
-        # Output: reporte de carga
-        self.reporte_dir = self.fecha_folder / "reportes"
-        self.reporte_dir.mkdir(parents=True, exist_ok=True)
+        print(f"[INFO] Leyendo vistas desde: {self.fecha_hoy}/views")
 
         # Verificar que DATABASE_URL esté configurada
         if not Config.DATABASE_URL:
@@ -80,20 +73,27 @@ class DatabaseUploader:
 
         return df
 
-    def subir_vista(self, csv_path: Path) -> Dict:
+    def subir_vista(self, filename: str) -> Dict:
         """
         Sube una vista CSV a la base de datos PostgreSQL
+
+        Args:
+            filename: Nombre del archivo CSV (ej: 'v_temperatura.csv')
         """
-        nombre_archivo = csv_path.name
-        nombre_tabla = csv_path.stem  # Nombre sin extensión
+        nombre_archivo = filename
+        nombre_tabla = Path(filename).stem  # Nombre sin extensión
 
         start_time = time.time()
 
         try:
             print(f"  Procesando: {nombre_tabla}")
 
-            # Leer CSV
-            df = pd.read_csv(csv_path)
+            # Leer CSV desde storage (S3 o local)
+            subfolder = f"{self.fecha_hoy}/views"
+            file_data = self.storage.load_file(filename, subfolder)
+
+            # Convertir bytes a DataFrame
+            df = pd.read_csv(io.BytesIO(file_data))
             num_registros = len(df)
 
             if num_registros == 0:
@@ -170,7 +170,7 @@ class DatabaseUploader:
         """Sube todas las vistas CSV a la base de datos"""
         print("Iniciando carga de vistas a la base de datos...")
         print(f"Base de datos: {Config.DATABASE_URL.split('@')[1].split('/')[0]}")  # Mostrar solo el host
-        print(f"Carpeta entrada: {self.input_data_dir}\n")
+        print(f"Carpeta entrada: {self.fecha_hoy}/views\n")
 
         # Verificar conexión
         try:
@@ -185,15 +185,19 @@ class DatabaseUploader:
 
         start_time = time.time()
 
-        # Obtener todos los archivos CSV
-        csv_files = list(self.input_data_dir.glob("*.csv"))
+        # Obtener todos los archivos CSV desde storage
+        subfolder = f"{self.fecha_hoy}/views"
+        all_files = self.storage.list_files(subfolder, "*.csv")
+
+        # Extraer solo los nombres de archivo (no las rutas completas)
+        csv_files = [Path(f).name for f in all_files]
         total_archivos = len(csv_files)
 
         print(f"Total de vistas a subir: {total_archivos}\n")
         print("=" * 80)
 
-        for idx, csv_path in enumerate(csv_files, 1):
-            resultado = self.subir_vista(csv_path)
+        for idx, filename in enumerate(csv_files, 1):
+            resultado = self.subir_vista(filename)
 
             if resultado["status"] == "success":
                 print(f"[{idx}/{total_archivos}] ✓ {resultado['tabla']}: {resultado['registros']} registros\n")
@@ -249,7 +253,8 @@ class DatabaseUploader:
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                 "etapa": "upload_to_db",
                 "base_de_datos": Config.DATABASE_URL.split('@')[1].split('?')[0],  # host/database sin credenciales
-                "carpeta_origen": str(self.input_data_dir)
+                "carpeta_origen": f"{self.fecha_hoy}/views",
+                "storage_mode": Config.STORAGE_MODE
             },
             "resumen": {
                 "total_vistas": total,
@@ -268,11 +273,9 @@ class DatabaseUploader:
             "vistas_fallidas": self.resultados['fallidos']
         }
 
-        reporte_path = self.reporte_dir / "paso6_upload_to_db.json"
-        with open(reporte_path, 'w', encoding='utf-8') as f:
-            json.dump(reporte, f, indent=2, ensure_ascii=False)
-
-        print(f"Reporte JSON guardado: {reporte_path}\n")
+        # Guardar reporte usando storage
+        self.storage.save_json(reporte, "paso6_upload_to_db.json", f"{self.fecha_hoy}/reportes")
+        print(f"[OK] Reporte JSON guardado: {self.fecha_hoy}/reportes/paso6_upload_to_db.json\n")
 
         return reporte
 
@@ -291,7 +294,7 @@ def main():
         uploader.generar_reporte(tiempo_total)
 
         print("\n[OK] Carga a base de datos completada!")
-        print(f"Reporte: {uploader.reporte_dir}")
+        print(f"Reporte: {uploader.fecha_hoy}/reportes/paso6_upload_to_db.json")
 
         # Cerrar conexión
         uploader.engine.dispose()

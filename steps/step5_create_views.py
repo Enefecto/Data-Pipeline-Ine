@@ -7,6 +7,7 @@ Etapa 5 del pipeline
 import json
 import time
 import sys
+import io
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
@@ -16,30 +17,13 @@ from typing import List, Dict, Tuple, Set
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config import Config
+from utils.storage_factory import StorageFactory
 
 
 class ViewCreator:
     def __init__(self):
-        self.output_base = Path(Config.OUTPUT_DIR)
-
-        # Buscar la carpeta de fecha más reciente
-        fecha_folders = sorted([f for f in self.output_base.iterdir() if f.is_dir()], reverse=True)
-
-        if not fecha_folders:
-            raise Exception("No se encontraron carpetas de salida para procesar")
-
-        self.fecha_folder = fecha_folders[0]  # La más reciente
-
-        # Input: datos procesados de raw (ya estandarizados, sin columnas flags, y filtrados)
-        self.input_data_dir = self.fecha_folder / "raw"
-
-        # Output: vistas consolidadas
-        self.output_data_dir = self.fecha_folder / "views"
-        self.reporte_dir = self.fecha_folder / "reportes"
-
-        # Crear directorios de salida
-        self.output_data_dir.mkdir(parents=True, exist_ok=True)
-        self.reporte_dir.mkdir(parents=True, exist_ok=True)
+        self.storage = StorageFactory.get_storage()
+        self.fecha_hoy = datetime.now().strftime("%d-%m-%Y")
 
         # Cargar mapeo de columnas de estaciones
         mapping_path = Path(__file__).parent.parent / "dictionary" / "station_columns_mapping.json"
@@ -275,12 +259,16 @@ class ViewCreator:
             # Cargar todas las tablas
             dataframes = {}
             for table in tables:
-                csv_path = self.input_data_dir / f"{table}.csv"
-                if not csv_path.exists():
-                    print(f"    [WARN] Tabla no encontrada: {table}.csv")
-                    continue
+                filename = f"{table}.csv"
+                subfolder = f"{self.fecha_hoy}/raw"
 
-                df = pd.read_csv(csv_path)
+                # Cargar archivo usando storage
+                try:
+                    file_data = self.storage.load_file(filename, subfolder)
+                    df = pd.read_csv(io.BytesIO(file_data))
+                except Exception as e:
+                    print(f"    [WARN] Tabla no encontrada: {filename} - {str(e)}")
+                    continue
 
                 # Eliminar columnas flag_codes y flags si existen
                 df = df.drop(columns=['Flag Codes', 'Flags', 'flag_codes', 'flags', 'FLAG CODES', 'FLAGS'], errors='ignore')
@@ -425,9 +413,14 @@ class ViewCreator:
                 if dti_columns:
                     result_df = result_df.drop(columns=dti_columns)
 
-            # Guardar CSV
-            output_path = self.output_data_dir / f"{view_name}.csv"
-            result_df.to_csv(output_path, index=False)
+            # Guardar CSV usando storage
+            csv_buffer = io.StringIO()
+            result_df.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode('utf-8')
+
+            filename = f"{view_name}.csv"
+            subfolder_views = f"{self.fecha_hoy}/views"
+            self.storage.save_file(csv_bytes, filename, subfolder_views)
 
             return {
                 "status": "success",
@@ -438,7 +431,7 @@ class ViewCreator:
                 "num_registros": len(result_df),
                 "num_columnas": len(result_df.columns),
                 "columnas": list(result_df.columns),
-                "size_bytes": output_path.stat().st_size
+                "size_bytes": len(csv_bytes)
             }
 
         except Exception as e:
@@ -456,17 +449,19 @@ class ViewCreator:
         Solo elimina flag_codes y flags
         """
         try:
-            csv_path = self.input_data_dir / f"{table_name}.csv"
+            filename = f"{table_name}.csv"
+            subfolder = f"{self.fecha_hoy}/raw"
 
-            if not csv_path.exists():
+            # Cargar archivo usando storage
+            try:
+                file_data = self.storage.load_file(filename, subfolder)
+                df = pd.read_csv(io.BytesIO(file_data))
+            except Exception as e:
                 return {
                     "status": "error",
                     "view_name": f"v_{table_name}",
-                    "error": f"Archivo no encontrado: {table_name}.csv"
+                    "error": f"Archivo no encontrado: {table_name}.csv - {str(e)}"
                 }
-
-            # Leer CSV
-            df = pd.read_csv(csv_path)
 
             # Eliminar columnas flag_codes y flags
             df = df.drop(columns=['Flag Codes', 'Flags', 'flag_codes', 'flags', 'FLAG CODES', 'FLAGS'], errors='ignore')
@@ -478,8 +473,12 @@ class ViewCreator:
 
             # Guardar con prefijo v_
             view_name = f"v_{table_name}"
-            output_path = self.output_data_dir / f"{view_name}.csv"
-            df.to_csv(output_path, index=False)
+            csv_buffer = io.StringIO()
+            df.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode('utf-8')
+
+            subfolder_views = f"{self.fecha_hoy}/views"
+            self.storage.save_file(csv_bytes, f"{view_name}.csv", subfolder_views)
 
             return {
                 "status": "success",
@@ -489,7 +488,7 @@ class ViewCreator:
                 "num_registros": len(df),
                 "num_columnas": len(df.columns),
                 "columnas": list(df.columns),
-                "size_bytes": output_path.stat().st_size
+                "size_bytes": len(csv_bytes)
             }
 
         except Exception as e:
@@ -520,10 +519,14 @@ class ViewCreator:
             # Reordenar columnas: nombre, latitud, longitud, numero_region, nombre_region, descripcion
             estaciones_df = estaciones_df[['nombre', 'latitud', 'longitud', 'numero_region', 'nombre_region', 'descripcion']]
 
-            # Guardar CSV
+            # Guardar CSV usando storage
             view_name = "v_estaciones"
-            output_path = self.output_data_dir / f"{view_name}.csv"
-            estaciones_df.to_csv(output_path, index=False)
+            csv_buffer = io.StringIO()
+            estaciones_df.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode('utf-8')
+
+            subfolder_views = f"{self.fecha_hoy}/views"
+            self.storage.save_file(csv_bytes, f"{view_name}.csv", subfolder_views)
 
             return {
                 "status": "success",
@@ -532,7 +535,7 @@ class ViewCreator:
                 "num_registros": len(estaciones_df),
                 "num_columnas": len(estaciones_df.columns),
                 "columnas": list(estaciones_df.columns),
-                "size_bytes": output_path.stat().st_size
+                "size_bytes": len(csv_bytes)
             }
 
         except Exception as e:
@@ -571,9 +574,11 @@ class ViewCreator:
             }
 
             # Para glaciares (cuencas)
-            csv_path = self.input_data_dir / "num_glaciares_por_cuenca.csv"
-            if csv_path.exists():
-                df = pd.read_csv(csv_path)
+            filename_glaciares = "num_glaciares_por_cuenca.csv"
+            subfolder = f"{self.fecha_hoy}/raw"
+            try:
+                file_data = self.storage.load_file(filename_glaciares, subfolder)
+                df = pd.read_csv(io.BytesIO(file_data))
                 if 'Cuencas' in df.columns:
                     for cuenca in df['Cuencas'].dropna().unique():
                         entidades_list.append({
@@ -581,12 +586,15 @@ class ViewCreator:
                             'tipo': 'Cuenca Hidrográfica',
                             'descripcion': 'Cuenca hidrográfica - Monitoreo de glaciares y balance hídrico regional'
                         })
+            except:
+                pass  # Archivo no existe, continuar
 
             # Extraer entidades de cada tabla
             for table, (col_name, tipo, descripcion) in entidades_mapping.items():
-                csv_path = self.input_data_dir / f"{table}.csv"
-                if csv_path.exists():
-                    df = pd.read_csv(csv_path)
+                filename = f"{table}.csv"
+                try:
+                    file_data = self.storage.load_file(filename, subfolder)
+                    df = pd.read_csv(io.BytesIO(file_data))
                     if col_name in df.columns:
                         for entidad in df[col_name].dropna().unique():
                             entidades_list.append({
@@ -594,6 +602,8 @@ class ViewCreator:
                                 'tipo': tipo,
                                 'descripcion': descripcion
                             })
+                except:
+                    pass  # Archivo no existe, continuar
 
             # Crear DataFrame y eliminar duplicados
             entidades_df = pd.DataFrame(entidades_list)
@@ -603,10 +613,14 @@ class ViewCreator:
             # Agregar id
             entidades_df.insert(0, 'id', range(1, len(entidades_df) + 1))
 
-            # Guardar CSV
+            # Guardar CSV usando storage
             view_name = "v_entidades_agua"
-            output_path = self.output_data_dir / f"{view_name}.csv"
-            entidades_df.to_csv(output_path, index=False)
+            csv_buffer = io.StringIO()
+            entidades_df.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode('utf-8')
+
+            subfolder_views = f"{self.fecha_hoy}/views"
+            self.storage.save_file(csv_bytes, f"{view_name}.csv", subfolder_views)
 
             return {
                 "status": "success",
@@ -615,7 +629,7 @@ class ViewCreator:
                 "num_registros": len(entidades_df),
                 "num_columnas": len(entidades_df.columns),
                 "columnas": list(entidades_df.columns),
-                "size_bytes": output_path.stat().st_size
+                "size_bytes": len(csv_bytes)
             }
 
         except Exception as e:
@@ -630,8 +644,8 @@ class ViewCreator:
     def procesar_vistas(self):
         """Procesa todas las vistas"""
         print("Iniciando generacion de vistas consolidadas...")
-        print(f"Carpeta entrada: {self.input_data_dir}")
-        print(f"Carpeta salida: {self.output_data_dir}\n")
+        print(f"Carpeta entrada: {self.fecha_hoy}/raw")
+        print(f"Carpeta salida: {self.fecha_hoy}/views\n")
 
         start_time = time.time()
 
@@ -750,8 +764,9 @@ class ViewCreator:
                 "timestamp": datetime.now().isoformat(),
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                 "etapa": "views",
-                "carpeta_origen": str(self.input_data_dir),
-                "carpeta_destino": str(self.output_data_dir)
+                "carpeta_origen": f"{self.fecha_hoy}/raw",
+                "carpeta_destino": f"{self.fecha_hoy}/views",
+                "storage_mode": Config.STORAGE_MODE
             },
             "resumen": {
                 "total_vistas": total_exitosos,
@@ -776,11 +791,9 @@ class ViewCreator:
             "fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.reporte_dir / "paso5_create_views.json"
-        with open(reporte_path, 'w', encoding='utf-8') as f:
-            json.dump(reporte, f, indent=2, ensure_ascii=False)
-
-        print(f"Reporte JSON guardado: {reporte_path}\n")
+        # Guardar reporte usando StorageFactory
+        self.storage.save_json(reporte, "paso5_create_views.json", f"{self.fecha_hoy}/reportes")
+        print(f"[OK] Reporte JSON guardado: {self.fecha_hoy}/reportes/paso5_create_views.json\n")
 
         return reporte
 
@@ -799,8 +812,8 @@ def main():
         creator.generar_reporte(tiempo_total)
 
         print("\n[OK] Generacion de vistas completada!")
-        print(f"Archivos generados: {creator.output_data_dir}")
-        print(f"Reporte: {creator.reporte_dir}")
+        print(f"Archivos generados: {creator.fecha_hoy}/views")
+        print(f"Reporte: {creator.fecha_hoy}/reportes/paso5_create_views.json")
 
     except Exception as e:
         print(f"\n[ERROR] Error fatal: {e}")

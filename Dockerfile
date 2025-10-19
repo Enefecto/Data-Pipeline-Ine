@@ -16,6 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar archivos del proyecto
 COPY dictionary/ ./dictionary/
+COPY utils/ ./utils/
 COPY config.py .
 COPY steps/ ./steps/
 

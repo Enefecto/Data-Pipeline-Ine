@@ -11,25 +11,31 @@ from datetime import datetime
 from typing import Dict, List
 
 from config import Config
+from utils.storage_factory import StorageFactory
 
 
 class NameStandardizer:
     def __init__(self):
+        self.storage = StorageFactory.get_storage()
         self.mapping_path = "/app/dictionary/dataset_name_mapping.json"
-        self.output_base = Path(Config.OUTPUT_DIR)
+        self.fecha_hoy = datetime.now().strftime("%d-%m-%Y")
 
-        # Buscar la carpeta de fecha más reciente
-        fecha_folders = sorted([f for f in self.output_base.iterdir() if f.is_dir()], reverse=True)
+        # Solo crear directorios locales si no estamos en producción
+        if not Config.PRODUCTION:
+            self.output_base = Path(Config.OUTPUT_DIR)
+            fecha_folders = sorted([f for f in self.output_base.iterdir() if f.is_dir()], reverse=True)
 
-        if not fecha_folders:
-            raise Exception("No se encontraron carpetas de salida para procesar")
+            if not fecha_folders:
+                raise Exception("No se encontraron carpetas de salida para procesar")
 
-        self.fecha_folder = fecha_folders[0]  # La más reciente
-        self.raw_data_dir = self.fecha_folder / "raw"
-        self.reporte_dir = self.fecha_folder / "reportes"
-
-        # Crear directorio de reportes si no existe
-        self.reporte_dir.mkdir(parents=True, exist_ok=True)
+            self.fecha_folder = fecha_folders[0]
+            self.raw_data_dir = self.fecha_folder / "raw"
+            self.reporte_dir = self.fecha_folder / "reportes"
+            self.reporte_dir.mkdir(parents=True, exist_ok=True)
+        else:
+            # En S3 mode, usar paths virtuales
+            self.raw_data_dir = None
+            self.reporte_dir = None
 
         self.mapping = {}
         self.resultados = {
@@ -53,17 +59,14 @@ class NameStandardizer:
         Obtiene el dataset ID del archivo original basándose en el nombre
         Lee el reporte del paso 1 para obtener el mapping correcto
         """
-        # Leer reporte del paso 1
-        reporte_path = self.reporte_dir / "paso1_scraper.json"
+        # Leer reporte del paso 1 usando storage
+        reporte_data = self.storage.load_json("paso1_scraper.json", f"{self.fecha_hoy}/reportes")
 
-        if not reporte_path.exists():
+        if not reporte_data:
             return None
 
-        with open(reporte_path, 'r', encoding='utf-8') as f:
-            reporte = json.load(f)
-
         # Buscar en datasets exitosos
-        for dataset in reporte['datasets_exitosos']:
+        for dataset in reporte_data['datasets_exitosos']:
             if dataset['nombre_archivo'] == filename:
                 return dataset['id']
 
@@ -72,19 +75,18 @@ class NameStandardizer:
     def estandarizar_archivos(self):
         """Renombra los archivos CSV en la carpeta raw con nombres estandarizados"""
         print("🔄 Iniciando estandarización de nombres (in-place)...")
-        print(f"📁 Carpeta raw: {self.raw_data_dir}\n")
 
         start_time = time.time()
 
-        # Obtener todos los archivos CSV
-        csv_files = list(self.raw_data_dir.glob("*.csv"))
+        # Obtener todos los archivos CSV usando storage
+        csv_files = self.storage.list_files(f"{self.fecha_hoy}/raw", "*.csv")
         total_archivos = len(csv_files)
 
         print(f"📊 Total de archivos a procesar: {total_archivos}\n")
         print("=" * 80)
 
-        for idx, archivo_path in enumerate(csv_files, 1):
-            filename = archivo_path.name
+        for idx, filepath in enumerate(csv_files, 1):
+            filename = Path(filepath).name
 
             try:
                 # Obtener dataset_id del archivo
@@ -113,9 +115,9 @@ class NameStandardizer:
                 nombre_estandarizado = mapeo['nombre_estandarizado']
                 nuevo_filename = f"{nombre_estandarizado}.csv"
 
-                # Renombrar archivo in-place
-                nuevo_path = self.raw_data_dir / nuevo_filename
-                archivo_path.rename(nuevo_path)
+                # Renombrar archivo usando storage (copy + delete para S3)
+                subfolder = f"{self.fecha_hoy}/raw"
+                file_size = self.storage.rename_file(filename, nuevo_filename, subfolder)
 
                 print(f"[{idx}/{total_archivos}] ✓ {mapeo['nombre_original'][:50]}...")
                 print(f"      └─ Renombrado: {nuevo_filename}")
@@ -127,7 +129,7 @@ class NameStandardizer:
                     "nombre_estandarizado": nombre_estandarizado,
                     "archivo_nuevo": nuevo_filename,
                     "categoria": mapeo['categoria'],
-                    "size": nuevo_path.stat().st_size
+                    "size": file_size
                 })
 
             except Exception as e:
@@ -183,7 +185,8 @@ class NameStandardizer:
                 "timestamp": datetime.now().isoformat(),
                 "fecha": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                 "etapa": "standardize_names",
-                "carpeta_raw": str(self.raw_data_dir)
+                "carpeta_raw": f"{self.fecha_hoy}/raw",
+                "storage_mode": Config.STORAGE_MODE
             },
             "resumen": {
                 "total_archivos": total,
@@ -201,11 +204,9 @@ class NameStandardizer:
             "archivos_fallidos": self.resultados['fallidos']
         }
 
-        reporte_path = self.reporte_dir / "paso2_standardize.json"
-        with open(reporte_path, 'w', encoding='utf-8') as f:
-            json.dump(reporte, f, indent=2, ensure_ascii=False)
-
-        print(f"📄 Reporte JSON guardado: {reporte_path}\n")
+        # Guardar reporte usando StorageFactory
+        self.storage.save_json(reporte, "paso2_standardize.json", f"{self.fecha_hoy}/reportes")
+        print(f"[OK] Reporte JSON guardado: {self.fecha_hoy}/reportes/paso2_standardize.json\n")
 
         return reporte
 

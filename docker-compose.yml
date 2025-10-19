@@ -9,6 +9,9 @@ services:
       - ./dictionary:/app/dictionary
       - ./steps:/app/steps
       - ./config.py:/app/config.py
+      - ./.env:/app/.env
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       # Pipeline
@@ -38,6 +41,9 @@ services:
       - ./dictionary:/app/dictionary
       - ./steps:/app/steps
       - ./config.py:/app/config.py
+      - ./.env:/app/.env
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - PIPELINE_STAGE=standardized
@@ -55,6 +61,9 @@ services:
       - ./outputs:/app/outputs
       - ./steps:/app/steps
       - ./config.py:/app/config.py
+      - ./.env:/app/.env
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - PIPELINE_STAGE=columns_removed
@@ -73,6 +82,9 @@ services:
       - ./dictionary:/app/dictionary
       - ./steps:/app/steps
       - ./config.py:/app/config.py
+      - ./.env:/app/.env
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - PIPELINE_STAGE=filtered_stations
@@ -91,6 +103,9 @@ services:
       - ./dictionary:/app/dictionary
       - ./steps:/app/steps
       - ./config.py:/app/config.py
+      - ./.env:/app/.env
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - PIPELINE_STAGE=views
