@@ -54,7 +54,6 @@
   {"nombre": "Las Encinas", "latitud": -33.460, "longitud": -70.620, "numero_region": 13, "nombre_region": "Metropolitana", "descripcion": "Estación Las Encinas, Santiago"},
   {"nombre": "Liceo Polivalente", "latitud": -33.480, "longitud": -70.650, "numero_region": 13, "nombre_region": "Metropolitana", "descripcion": "Estación Liceo Polivalente, Santiago"},
   {"nombre": "Lo Barnechea (J)", "latitud": -33.348, "longitud": -70.510, "numero_region": 13, "nombre_region": "Metropolitana", "descripcion": "Estación Lo Barnechea J, Santiago"},
-  {"nombre": "M. Ferroviario", "latitud": -33.460, "longitud": -70.670, "numero_region": 13, "nombre_region": "Metropolitana", "descripcion": "Museo Ferroviario, Santiago"},
   {"nombre": "Maquehue", "latitud": -38.767, "longitud": -72.628, "numero_region": 9, "nombre_region": "Araucanía", "descripcion": "Aeródromo Temuco"},
   {"nombre": "Mataveri", "latitud": -27.165, "longitud": -109.421, "numero_region": 5, "nombre_region": "Valparaíso", "descripcion": "Aeropuerto Internacional Isla de Pascua"},
   {"nombre": "Mirasol", "latitud": -36.820, "longitud": -73.050, "numero_region": 8, "nombre_region": "Biobío", "descripcion": "Estación Mirasol, Concepción"},
@@ -94,7 +93,5 @@
   {"nombre": "Valparaíso", "latitud": -33.047, "longitud": -71.613, "numero_region": 5, "nombre_region": "Valparaíso", "descripcion": "Estación Valparaíso ciudad"},
   {"nombre": "Vialidad/Puerto Aysén", "latitud": -45.401, "longitud": -72.694, "numero_region": 11, "nombre_region": "Aysén", "descripcion": "Estación Puerto Aysén"},
   {"nombre": "Viña del Mar", "latitud": -33.025, "longitud": -71.552, "numero_region": 5, "nombre_region": "Valparaíso", "descripcion": "Estación Viña del Mar ciudad"},
-  {"nombre": "linares", "latitud": -35.847, "longitud": -71.596, "numero_region": 7, "nombre_region": "Maule", "descripcion": "Estación Linares, Maule"},
-  {"nombre": "los Angeles Oriente", "latitud": -37.465, "longitud": -72.350, "numero_region": 8, "nombre_region": "Biobío", "descripcion": "Estación Los Ángeles, Biobío"},
-  {"nombre": "Ñielol", "latitud": -38.730, "longitud": -72.590, "numero_region": 9, "nombre_region": "Araucanía", "descripcion": "Estación Ñielol, Araucanía"}
+  {"nombre": "linares", "latitud": -35.847, "longitud": -71.596, "numero_region": 7, "nombre_region": "Maule", "descripcion": "Estación Linares, Maule"}
 ]
